@@ -280,28 +280,7 @@ $$
 
 <a id="s9"></a>
 ## 9. Derivative 与 Partial Derivative
-
-**对应课件：第 21–23 页。**
-
-### 9.1 Derivative：一维变化率
-
-$df/dx$ 描述 $x$ 增加时 $f(x)$ 在当前位置的变化率。
-
-| 导数 | 如果希望降低 $f$，局部应怎样移动 |
-| --- | --- |
-| $df/dx>0$ | 减小 $x$ |
-| $df/dx<0$ | 增大 $x$ |
-| $df/dx=0$ | 一阶变化率为 0，是 stationary point 的条件 |
-
-统一更新规则：
-
-$$
-x^{(t+1)}=x^{(t)}-\eta\frac{df}{dx}\bigg|_{x=x^{(t)}},\qquad\eta>0.
-$$
-
-**补充例子：** $f(x)=x^2$，$f'(x)=2x$。当 $x=3,\eta=0.1$，新值为 $3-0.1\times6=2.4$；当 $x=-3$，新值为 $-3-0.1\times(-6)=-2.4$。两个位置都向最小点 0 移动。
-
-### 9.2 Partial Derivative：多维变化率
+没啥好讲的其实就是斜率的意思，高中的求导
 
 对于 $E(w_0,\ldots,w_d)$，$\partial E/\partial w_j$ 表示固定其他参数时，改变 $w_j$ 带来的局部变化率。
 
@@ -309,9 +288,8 @@ $$
 w_j^{(t+1)}=w_j^{(t)}-\eta\frac{\partial E}{\partial w_j}\bigg|_{\mathbf w=\mathbf w^{(t)}}.
 $$
 
-**注意：求导对象是参数 $w_j$，不是输入特征 $x_j$。** 学习过程中训练数据固定，调整的是模型参数。
-
-导数为 0 不一定意味着最小值；一般函数也可能在最大值或 Saddle Point 处梯度为 0。课件的碗形示意图只帮助理解方向，不代表 Logistic Regression 的 loss 是 quadratic function。
+**注意**
+导数为 0 不一定意味着最小值；也可能在最大值
 
 <a id="s10"></a>
 ## 10. Gradient 与 Steepest Descent
@@ -336,22 +314,9 @@ $$
 \boxed{\mathbf w^{(t+1)}=\mathbf w^{(t)}-\eta\nabla E(\mathbf w^{(t)})}.
 $$
 
-**补充解释：** 对足够小的变化 $\Delta\mathbf w$，一阶近似为：
+减去 gradient 能局部降低 loss。**“Steepest”说的是当前位置、固定小步长下的方向，不表示任意大的更新都保证降低 loss。。。**
 
-$$
-E(\mathbf w+\Delta\mathbf w)
-\approx E(\mathbf w)+\nabla E(\mathbf w)^T\Delta\mathbf w.
-$$
 
-令 $\Delta\mathbf w=-\eta\nabla E$，则近似变化为：
-
-$$
--\eta\Vert\nabla E\Vert_2^2\leq0.
-$$
-
-这说明为什么减去 gradient 能局部降低 loss。**“Steepest”说的是当前位置、固定小步长下的方向，不表示任意大的更新都保证降低 loss。**
-
-课件三维图的水平坐标是参数 $w_0,w_1$，竖直坐标是 $E(\mathbf w)$；它展示的是 Parameter Space 中的优化，而不是 Input Space 中的分类边界。
 
 <a id="s11"></a>
 ## 11. Logistic Regression 的梯度推导
