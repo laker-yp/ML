@@ -374,12 +374,14 @@ $$
 
 $$
 q=\sigma(z)=\frac1{1+e^{-z}},\qquad
-\frac{dq}{dz}=\frac{e^{-z}}{(1+e^{-z})^2}=q(1-q).
+$$
+$$
+\frac{dq}{dz}=q(1-q).
 $$
 
 ### 11.2 单样本 loss 对概率求导
 
-为简洁省略样本上标：
+ps省略上标：
 
 $$
 E_i=-[y\ln q+(1-y)\ln(1-q)].
@@ -387,15 +389,11 @@ $$
 
 $$
 \frac{\partial E_i}{\partial q}
-=-\frac yq+\frac{1-y}{1-q}
 =\frac{q-y}{q(1-q)}.
 $$
 
-第二项是正号，因为对 $-\ln(1-q)$ 求导时，内层 $1-q$ 还会贡献一个负号。
 
 ### 11.3 对 score 求导
-
-利用 Chain Rule：
 
 $$
 \frac{\partial E_i}{\partial z}
@@ -426,7 +424,7 @@ $$
 =\sum_{i=1}^{N}(q_i-y^{(i)})\tilde{\mathbf x}^{(i)}}.
 $$
 
-**记忆：Gradient = 预测概率与真实标签之差 × 输入，再对样本求和。** 这里使用概率 $q_i$，不是经过 0.5 阈值后的类别 $\hat y^{(i)}$。
+**记忆：Gradient = (预测概率-真实标签之差) × 输入值，再求和。** 
 
 ### 11.5 Bias 的梯度
 
