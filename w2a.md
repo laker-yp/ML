@@ -1,9 +1,5 @@
 # Maximum Likelihood Estimation and Gradient Descent
 
-> Machine Learning 课程笔记｜最大似然估计与梯度下降  
-> 依据课件：`2a-MLE-gradient-descent.pdf`（33 页，更新于 03/10/2026）。  
-> 延续上一节 Logistic Regression：本节回答“如何从训练数据中学习参数”。重复展示页按知识点合并；额外推导与严谨性说明标为“补充”。
-
 ## 目录
 
 - [1. 本节主线与符号](#s1)
@@ -56,18 +52,13 @@ $$
 | $\nabla E(\mathbf w)$ | Loss 对全部参数的 Gradient |
 | $\eta>0$ | Learning Rate |
 
-本笔记使用 $q_i$ 简写课件中的 $p(1\mid\mathbf x^{(i)},\mathbf w)$。课件加入 $x_0=1$ 后仍写 $\mathbf x$；这里用 $\tilde{\mathbf x}$ 明确表示增广输入。
-
-**区分：** $E(\mathbf w)$ 在本课是整个训练集上的总 Loss；上一节 $E(g(\mathbf x),y)$ 表示单次预测的 error function。符号相似，参数与语境不同。
-
 <a id="s2"></a>
 ## 2. Maximum Likelihood Estimation
 
 **对应课件：第 4、8 页。**
 
-**Maximum Likelihood Estimation（MLE，最大似然估计）**：将训练数据视为已知，选择使这些观察结果的 Likelihood 最大的参数。
-
-在 Logistic Regression 中，我们已经知道输入和正确标签。对不同候选 $\mathbf w$，模型给这些正确标签分配的概率不同。MLE 选择使整组真实标签最可能出现的参数。
+**Maximum Likelihood Estimation（MLE，最大似然估计）**：
+训练数据和结果已知，找一个参数能使得观察到这个结果的 Likelihood 最大
 
 $$
 \boxed{\hat{\mathbf w}_{\mathrm{MLE}}=\arg\max_{\mathbf w}\mathcal L(\mathbf w)}.
@@ -75,15 +66,12 @@ $$
 
 | 表达式 | 返回的是什么 |
 | --- | --- |
-| $\max_{\mathbf w}\mathcal L(\mathbf w)$ | 最大的 Likelihood 数值（若最大值存在） |
-| $\arg\max_{\mathbf w}\mathcal L(\mathbf w)$ | 取得最大值的参数（若存在，可能不唯一） |
+| $\max_{\mathbf w}\mathcal L(\mathbf w)$ | 最大的 Likelihood 数值 |
+| $\arg\max_{\mathbf w}\mathcal L(\mathbf w)$ | 取得最大值的参数 |
 
-**MLE 给出“应该优化什么”的原则；Gradient Descent 给出“怎样迭代求解”的方法。两者不是同一种概念。**
 
 <a id="s3"></a>
 ## 3. Likelihood：单个样本与整个训练集
-
-**对应课件：第 5–8 页。**
 
 ### 3.1 单个样本的 Conditional Likelihood
 
@@ -98,7 +86,7 @@ $$
 | $y^{(i)}=1$ | $q_i=p(1\mid\mathbf x^{(i)},\mathbf w)$ |
 | $y^{(i)}=0$ | $1-q_i=p(0\mid\mathbf x^{(i)},\mathbf w)$ |
 
-**不能不看真实标签，一律使用 $q_i$。** 例如真实标签是 0，而模型预测 $q_i=0.9$，正确标签的概率只有 $1-q_i=0.1$。
+例如真实标签是 0，而模型预测 $q_i=0.9$，正确标签的概率 $1-q_i=0.1$。
 
 用 Bernoulli 的统一写法：
 
