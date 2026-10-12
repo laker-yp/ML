@@ -387,22 +387,6 @@ $$
 \frac{\partial E}{\partial w_0}=\sum_{i=1}^{N}(q_i-y^{(i)}).
 $$
 
-### 11.6 Matrix Form 与维度
-
-**补充：** 令 $\tilde X$ 为加入全 1 列的 Design Matrix，$\mathbf q=\sigma(\tilde X\mathbf w)$，Sigmoid 逐元素作用。
-
-$$
-\boxed{\nabla E=\tilde X^T(\mathbf q-\mathbf y)}.
-$$
-
-| 对象 | 形状 |
-| --- | --- |
-| $\tilde X$ | $N\times(d+1)$ |
-| $\mathbf w$ | $(d+1)\times1$ |
-| $\mathbf q,\mathbf y$ | $N\times1$ |
-| $\tilde X^T(\mathbf q-\mathbf y)$ | $(d+1)\times1$ |
-
-所得 gradient 必须与 $\mathbf w$ 形状相同，才能相减。
 
 <a id="s12"></a>
 ## 12. Batch Gradient Descent
@@ -417,25 +401,11 @@ $$
 4. 更新 $\mathbf w\leftarrow\mathbf w-\eta\nabla E(\mathbf w)$。
 5. 重复上述过程，直到满足停止条件。
 
-课件停止条件是达到给定 iteration 数，或 gradient 成为零向量。**补充：实际数值计算通常用 gradient norm 小于某个 tolerance、loss 变化足够小或迭代上限，不要求浮点数恰好等于 0。**
+课件停止条件是达到给定 iteration 数，或 gradient 成为零向量。
 
-```text
-输入：增广训练矩阵 X_tilde，标签 y，learning rate eta，迭代上限 T
-初始化：w = 全零向量
+所有参数应使用**同一组旧参数**算出的 gradient 同时更新。
 
-重复最多 T 次：
-    z = X_tilde @ w
-    q = sigmoid(z)
-    gradient = X_tilde.T @ (q - y)    # 本课使用 sum loss
-    如果 gradient 的范数小于 tolerance：停止
-    w = w - eta * gradient
 
-输出：w
-```
-
-所有参数应使用**同一组旧参数**算出的 gradient 同时更新。若在算其他参数的 gradient 前已经更改某个权重，就不是本课给出的标准 vector update。
-
-初始化为全 0 时，每个样本 $z_i=0$，因此 $q_i=0.5$。Logistic Regression 可以这样初始化；不应把其他模型中关于初始化的要求机械套入本课。
 
 <a id="s13"></a>
 ## 13. 一轮参数更新的完整例子
