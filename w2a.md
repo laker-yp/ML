@@ -144,7 +144,7 @@ MLE 在这两个候选模型之间偏向 A，因为 A 对整组观察标签给�
 
 ### 5.1 为什么取 logarithm
 
-很多小于 1 的概率相乘，会得到非常小的数。例如 $0.1^{1000}=10^{-1000}$，直接计算可能出现 **Underflow**。乘积在求导时也较繁琐。
+没有log那就是累乘，想象一下很多小于 1 的概率相乘，会得到非常小的数。例如 $0.1^{1000}=10^{-1000}$，直接计算可能出现 **Underflow**。其次乘积在求导时也较繁琐。
 
 对乘积取自然对数，用 $\ln(ab)=\ln a+\ln b$ 将乘法转成加法：
 
@@ -156,18 +156,6 @@ $$
 
 这方便计算与求导，并避免显式计算整组极小的概率乘积。
 
-### 5.2 为什么最优参数不变
-
-$\ln$ 在正数范围上严格单调递增：$a>b>0\Rightarrow\ln a>\ln b$。它保留了候选 Likelihood 的大小顺序，因此：
-
-$$
-\boxed{\arg\max_{\mathbf w}\mathcal L(\mathbf w)
-=\arg\max_{\mathbf w}\ln\mathcal L(\mathbf w)}.
-$$
-
-这是**相同的最优参数**，不是两个函数的数值相同。上一节例子中，$\ln0.448\approx-0.803$，$\ln0.216\approx-1.532$；A 的 Log-Likelihood 仍然更大。
-
-**补充：** 应直接累加 log probabilities，而不是先算完乘积再取 log；后者可能在取 log 之前已经 Underflow。
 
 <a id="s6"></a>
 ## 6. Negative Log-Likelihood 与 Loss
