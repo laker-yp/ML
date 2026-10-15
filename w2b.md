@@ -277,25 +277,16 @@ w=w_0-\frac{E'(w_0)}{E''(w_0)}
 
 ### 6.3 多变量 Newton 公式
 
-```
+
+```math
 \mathbf{w}_{t+1}=\mathbf{w}_t-H_E(\mathbf{w}_t)^{-1}\nabla E(\mathbf{w}_t)
 ```
 
-一维里的「除以二阶导数」，在多维中变成「用 Hessian 的逆矩阵乘梯度」。这是矩阵运算，**不是把每个偏导数分别除以某个二阶偏导数**；后者会忽略不同方向之间的关系。
+注意H的-1是 Matrix Inverse 而不是什么倒数
 
-补充多变量推导：令 $\boldsymbol{\Delta}=\mathbf{w}-\mathbf{w}_t$，局部二次近似为：
+inverse方法：2x2就直接主对角线两个元素交换，副对角线的元素变号，最后除以行列式ad-bc
 
-```math
-Q(\boldsymbol{\Delta})=E(\mathbf{w}_t)+\nabla E(\mathbf{w}_t)^T\boldsymbol{\Delta}+\frac{1}{2}\boldsymbol{\Delta}^TH_E(\mathbf{w}_t)\boldsymbol{\Delta}
-```
 
-对更新量求梯度并令其为零，得到：
-
-```math
-\nabla E(\mathbf{w}_t)+H_E(\mathbf{w}_t)\boldsymbol{\Delta}=\mathbf{0}
-```
-
-当 Hessian 可逆时，就得到上面的更新公式。
 
 ## 7. Newton 方向与迭代过程
 
