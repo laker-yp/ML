@@ -277,7 +277,7 @@ w=w_0-\frac{E'(w_0)}{E''(w_0)}
 
 ### 6.3 多变量 Newton 公式
 
-```math
+```
 \mathbf{w}_{t+1}=\mathbf{w}_t-H_E(\mathbf{w}_t)^{-1}\nabla E(\mathbf{w}_t)
 ```
 
