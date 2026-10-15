@@ -1,4 +1,41 @@
+## 目录
+
+- [1. Logistic Regression 与泛化（PPT 4–5）](#sec-1)
+  - [1.1 Logistic Regression 的预测（PPT 4）](#sec-1-1)
+  - [1.2 Cross-Entropy Loss（PPT 4）](#sec-1-2)
+  - [1.3 Training Error 与 Generalisation Error（PPT 5）](#sec-1-3)
+- [2. Logistic Regression 的 Overfitting（PPT 6–10、13）](#sec-2)
+  - [2.1 为什么线性模型也会过拟合？（PPT 6）](#sec-2-1)
+  - [2.2 增大权重的效果（PPT 7–10）](#sec-2-2)
+- [3. L2 Regularisation / Weight Decay（PPT 11–13）](#sec-3)
+  - [3.1 正则化后的目标函数（PPT 11）](#sec-3-1)
+  - [3.2 加入 L2 后的 Gradient（PPT 12）](#sec-3-2)
+  - [3.3 加入 L2 后的 Hessian（PPT 12）](#sec-3-3)
+- [4. Underfitting 与非线性变换的必要性（PPT 15–20）](#sec-4)
+  - [4.1 Linearly / Nonlinearly Separable（PPT 15–18）](#sec-4-1)
+  - [4.2 Feature Transform / Basis Expansion（PPT 19–20）](#sec-4-2)
+- [5. 如何构造 Polynomial Features（PPT 21–22、26–27）](#sec-5)
+  - [5.1 最高 $p$ 次多项式（PPT 21–22）](#sec-5-1)
+  - [5.2 不一定使用多项式（PPT 26）](#sec-5-2)
+  - [5.3 不一定增加维度（PPT 27）](#sec-5-3)
+- [6. 课件重点例题：为什么有两个决策边界？（PPT 23–25）](#sec-6)
+- [7. 在 Logistic Regression 中应用非线性变换（PPT 28–31）](#sec-7)
+  - [7.1 完整训练流程（PPT 28）](#sec-7-1)
+  - [7.2 Hypothesis / Score（PPT 29）](#sec-7-2)
+  - [7.3 Cross-Entropy（PPT 30）](#sec-7-3)
+  - [7.4 Gradient 与 Hessian（PPT 31）](#sec-7-4)
+  - [7.5 同时使用 L2（将 PPT 11–12 与 30–31 结合）](#sec-7-5)
+- [8. 变换后还是 Linear Model 吗？（PPT 32–33）](#sec-8)
+- [9. Nonlinear Transformations 的风险（PPT 34–35）](#sec-9)
+- [10. 考前重点公式](#sec-10)
+
+---
+
+<a id="sec-1"></a>
+
 # 1. Logistic Regression 与泛化（PPT 4–5）
+
+<a id="sec-1-1"></a>
 
 ## 1.1 Logistic Regression 的预测（PPT 4）
 
@@ -26,6 +63,8 @@ $$
 - **Decision Boundary（决策边界）**：$\mathbf{w}^T\mathbf{x}=0$。
 - $p_0=1-p_1$。
 
+<a id="sec-1-2"></a>
+
 ## 1.2 Cross-Entropy Loss（PPT 4）
 
 对于 $N$ 个训练样本：
@@ -39,6 +78,8 @@ $$
 - 真实标签是 $1$：损失为 $-\ln p_1^{(i)}$，模型希望 $p_1^{(i)}$ 趋近 $1$。
 - 真实标签是 $0$：损失为 $-\ln(1-p_1^{(i)})$，模型希望 $p_1^{(i)}$ 趋近 $0$。
 - **Cross-Entropy 在此页使用求和形式**，并且是在训练集上计算的。
+
+<a id="sec-1-3"></a>
 
 ## 1.3 Training Error 与 Generalisation Error（PPT 5）
 
@@ -74,7 +115,11 @@ $$
 
 ---
 
+<a id="sec-2"></a>
+
 # 2. Logistic Regression 的 Overfitting（PPT 6–10、13）
+
+<a id="sec-2-1"></a>
 
 ## 2.1 为什么线性模型也会过拟合？（PPT 6）
 
@@ -87,6 +132,8 @@ $$
 - 模型可能通过放大权重，使概率变得越来越极端，而不需要改变分类边界。
 
 因此，**训练集完全分对，不代表泛化一定好**。
+
+<a id="sec-2-2"></a>
 
 ## 2.2 增大权重的效果（PPT 7–10）
 
@@ -118,7 +165,11 @@ $$
 
 ---
 
+<a id="sec-3"></a>
+
 # 3. L2 Regularisation / Weight Decay（PPT 11–13）
+
+<a id="sec-3-1"></a>
 
 ## 3.1 正则化后的目标函数（PPT 11）
 
@@ -152,6 +203,8 @@ $$
 
 **易错点：** $\|\mathbf{w}\|_2$ 才是 L2 Norm，目标函数实际上使用其**平方**。课件把 $w_0$ 也纳入求和，本节推导沿用这一约定。
 
+<a id="sec-3-2"></a>
+
 ## 3.2 加入 L2 后的 Gradient（PPT 12）
 
 原始 Cross-Entropy 的 Gradient：
@@ -182,6 +235,8 @@ $$
 
 这里 $\eta$ 是 Learning Rate。该更新式是根据课件梯度公式直接写出的。
 
+<a id="sec-3-3"></a>
+
 ## 3.3 加入 L2 后的 Hessian（PPT 12）
 
 原始 Hessian：
@@ -204,7 +259,11 @@ $$
 
 ---
 
+<a id="sec-4"></a>
+
 # 4. Underfitting 与非线性变换的必要性（PPT 15–20）
+
+<a id="sec-4-1"></a>
 
 ## 4.1 Linearly / Nonlinearly Separable（PPT 15–18）
 
@@ -220,6 +279,8 @@ $$
 - **PPT 18**：一维蓝点在左右、橙点在中间，需要两个阈值；单个线性边界不够。
 
 这里的核心问题是**模型的表示能力不足**，并不是把 Gradient Descent 跑得更久就一定能解决。
+
+<a id="sec-4-2"></a>
 
 ## 4.2 Feature Transform / Basis Expansion（PPT 19–20）
 
@@ -253,7 +314,11 @@ $$
 
 ---
 
+<a id="sec-5"></a>
+
 # 5. 如何构造 Polynomial Features（PPT 21–22、26–27）
+
+<a id="sec-5-1"></a>
 
 ## 5.1 最高 $p$ 次多项式（PPT 21–22）
 
@@ -297,6 +362,8 @@ $$
 
 **原理：** 在 Feature Space 中，模型只是对各个变换后的特征作加权求和；代入原始变量后，就能表示非线性多项式边界。
 
+<a id="sec-5-2"></a>
+
 ## 5.2 不一定使用多项式（PPT 26）
 
 课件给出的另一种变换：
@@ -311,6 +378,8 @@ $$
 
 因此变换也可以包含指数函数等非多项式特征。
 
+<a id="sec-5-3"></a>
+
 ## 5.3 不一定增加维度（PPT 27）
 
 例如：
@@ -322,6 +391,8 @@ $$
 前后都只有三个分量。实际中往往不知道应保留哪些特征，所以会构造较高维的 Feature Space。
 
 ---
+
+<a id="sec-6"></a>
 
 # 6. 课件重点例题：为什么有两个决策边界？（PPT 23–25）
 
@@ -381,7 +452,11 @@ $$
 
 ---
 
+<a id="sec-7"></a>
+
 # 7. 在 Logistic Regression 中应用非线性变换（PPT 28–31）
+
+<a id="sec-7-1"></a>
 
 ## 7.1 完整训练流程（PPT 28）
 
@@ -395,6 +470,8 @@ $$
 $$
 T_{\phi}=\{(\phi(\mathbf{x}^{(1)}),y^{(1)}),\ldots,(\phi(\mathbf{x}^{(N)}),y^{(N)})\}
 $$
+
+<a id="sec-7-2"></a>
 
 ## 7.2 Hypothesis / Score（PPT 29）
 
@@ -418,6 +495,8 @@ $$
 
 **Sigmoid 没有换；变化的只是输入由 $\mathbf{x}$ 变成 $\phi(\mathbf{x})$。**
 
+<a id="sec-7-3"></a>
+
 ## 7.3 Cross-Entropy（PPT 30）
 
 为简化记号，设：
@@ -434,6 +513,8 @@ $$
 
 **Cross-Entropy 形式不变**，只是预测概率现在基于变换后的特征计算。
 
+<a id="sec-7-4"></a>
+
 ## 7.4 Gradient 与 Hessian（PPT 31）
 
 **Gradient：**
@@ -449,6 +530,8 @@ H_{E_{\phi}}(\mathbf{w})=\sum_{i=1}^{N}p_{\phi}^{(i)}(1-p_{\phi}^{(i)})\phi(\mat
 $$
 
 **联系 2a / 2c：** 计算结构与之前完全一致，只是把每个样本的 $\mathbf{x}^{(i)}$ 替换成 $\phi(\mathbf{x}^{(i)})$。
+
+<a id="sec-7-5"></a>
 
 ## 7.5 同时使用 L2（将 PPT 11–12 与 30–31 结合）
 
@@ -467,6 +550,8 @@ $$
 **非线性变换提高表达能力；L2 正则化限制权重过大。** 这三式为前后两部分公式的组合，课件没有单独列出。
 
 ---
+
+<a id="sec-8"></a>
 
 # 8. 变换后还是 Linear Model 吗？（PPT 32–33）
 
@@ -495,6 +580,8 @@ Linear Models 的优点（PPT 33）：学习算法常较高效，并可能具有
 
 ---
 
+<a id="sec-9"></a>
+
 # 9. Nonlinear Transformations 的风险（PPT 34–35）
 
 **PPT 34：Linear Fit 与 4th Order Polynomial 对比。**
@@ -512,6 +599,8 @@ Linear Models 的优点（PPT 33）：学习算法常较高效，并可能具有
 5. 下一部分将讨论：怎样在不显式计算高维嵌入的情况下使用它（本课件没有展开）。
 
 ---
+
+<a id="sec-10"></a>
 
 # 10. 考前重点公式
 
@@ -532,3 +621,4 @@ Linear Models 的优点（PPT 33）：学习算法常较高效，并可能具有
 - **Overfitting**：即使决策边界是线性的，权重也可能过大；用 **Regularisation** 缓解。
 - **Underfitting**：原来的线性边界不够灵活；用 **Nonlinear Transformations** 增强表达能力。
 - **变换后**：仍然可以使用之前学过的 Logistic Regression、Cross-Entropy、Gradient Descent 和 Newton–Raphson / IRLS。
+
