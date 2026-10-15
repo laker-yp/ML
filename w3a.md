@@ -1,19 +1,7 @@
----
-title: "Machine Learning 3a — Regularisation and Nonlinear Transformations"
-subtitle: "中文详细学习笔记｜对应原课件 35 页"
-author: "University of Birmingham · Machine Learning"
-date: "2026-10-13"
-lang: zh-CN
----
 
 # ML 3a — Regularisation and Nonlinear Transformations
 
-> **课件：** *Regularisation and Nonlinear Transformations* — Leandro L. Minku  
-> **范围：** 原课件第 1–35 页。每节均标明对应 PPT 页码。  
-> **阅读方式：** 先看概念与例子，再看公式；“理解补充”是为了帮助学习而加入的解释，并非课件原句。  
-> **前置知识：** Logistic Regression、Sigmoid、Cross-Entropy Loss、Gradient Descent、Newton–Raphson / IRLS。
-
-## 0. 本节课到底在解决什么问题？（PPT 第 1–3、14、35 页）
+## 0. 本节到底在解决什么问题？
 
 这节课围绕两个**看似相反**的问题：
 
@@ -28,7 +16,7 @@ lang: zh-CN
 
 ---
 
-## 1. 复习：Logistic Regression、Cross-Entropy 与 Generalisation（PPT 第 4–5 页）
+## 1. 复习
 
 ### 1.1 Logistic Regression 的预测（PPT 第 4 页）
 
