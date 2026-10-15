@@ -1,802 +1,534 @@
+# 1. Logistic Regression 与泛化（PPT 4–5）
 
-# ML 3a — Regularisation and Nonlinear Transformations
+## 1.1 Logistic Regression 的预测（PPT 4）
 
-## 0. 本节到底在解决什么问题？
+输入向量为 $\mathbf{x}$，权重向量为 $\mathbf{w}$，通常令 $x_0=1$ 来表示常数项（bias）。
 
-这节课围绕两个**看似相反**的问题：
+**Score：**
 
-1. **Overfitting（过拟合）**：模型在训练集上表现很好，却不一定能推广到新数据。即使 Logistic Regression 的决策边界是线性的，它仍可能出现过拟合。课件给出的主要解决思路是 **Regularisation（正则化）**，尤其是 **L2 / Weight Decay**。
-2. **Underfitting（欠拟合）**：模型本身过于简单，无法表达数据所需的决策边界。课件给出的主要解决思路是 **Nonlinear Transformations（非线性特征变换）**，把数据映射到新的 Feature Space，再使用熟悉的线性模型。
+$$
+z=\mathbf{w}^T\mathbf{x}
+$$
 
-**一条主线记住：**
+**Class 1 的预测概率：**
 
-- 正则化：**约束模型**，避免权重过大、过度自信。
-- 非线性变换：**增强特征表达能力**，使原空间中的复杂边界可以在新空间中用线性边界表示。
-- 两者可以一起使用：先变换特征，再在变换后的特征上使用带正则化的 Logistic Regression。
+$$
+p_1=\frac{e^z}{1+e^z}=\frac{1}{1+e^{-z}}
+$$
+
+**Log-odds：**
+
+$$
+\ln\frac{p_1}{1-p_1}=\mathbf{w}^T\mathbf{x}
+$$
+
+- $z\geq 0$：预测 Class 1；$z<0$：预测 Class 0。
+- **Decision Boundary（决策边界）**：$\mathbf{w}^T\mathbf{x}=0$。
+- $p_0=1-p_1$。
+
+## 1.2 Cross-Entropy Loss（PPT 4）
+
+对于 $N$ 个训练样本：
+
+$$
+E(\mathbf{w})=-\sum_{i=1}^{N}\left[y^{(i)}\ln p_1^{(i)}+(1-y^{(i)})\ln(1-p_1^{(i)})\right]
+$$
+
+其中 $p_1^{(i)}$ 是模型对第 $i$ 个训练样本预测为 Class 1 的概率。
+
+- 真实标签是 $1$：损失为 $-\ln p_1^{(i)}$，模型希望 $p_1^{(i)}$ 趋近 $1$。
+- 真实标签是 $0$：损失为 $-\ln(1-p_1^{(i)})$，模型希望 $p_1^{(i)}$ 趋近 $0$。
+- **Cross-Entropy 在此页使用求和形式**，并且是在训练集上计算的。
+
+## 1.3 Training Error 与 Generalisation Error（PPT 5）
+
+**Training Error / Empirical Risk（训练误差 / 经验风险）：**
+
+$$
+\hat{E}(\mathbf{w})=\frac{1}{N}\sum_{i=1}^{N}F(g(\mathbf{x}^{(i)}),y^{(i)})
+$$
+
+- $g$：预测函数；$F$：衡量预测与标签差异的误差函数。
+- **用 Training Set 计算，不是 Test Set。**
+
+**Generalisation Error / Population Risk（泛化误差 / 总体风险）：**
+
+$$
+E(\mathbf{w})=\mathrm{E}_{(\mathbf{x},y)\sim p(\mathbf{x},y)}[F(g(\mathbf{x}),y)]
+$$
+
+- 表示在真实数据分布上的**期望误差**。
+- 泛化误差越小，模型对未见数据的预测通常越好。
+
+**Generalisation Gap（泛化差距）：**
+
+$$
+G=E(\mathbf{w})-\hat{E}(\mathbf{w})
+$$
+
+训练误差小、泛化误差大时，$G$ 可能很大。
+
+> 注意：PPT 第 4 页的 $E(\mathbf{w})$ 是训练集 Cross-Entropy 总和；第 5 页复用了 $E(\mathbf{w})$ 表示总体风险。**应按所在公式区分，不要把两者当作同一个量。**
+
+**Inductive Bias（归纳偏置）**：学习算法为从有限样本推断未见数据而采用的假设。Logistic Regression 的重要假设是：**在当前特征空间中，决策边界是线性的。**
 
 ---
 
-## 1. 复习
+# 2. Logistic Regression 的 Overfitting（PPT 6–10、13）
 
-### 1.1 Logistic Regression 的预测（PPT 第 4 页）
+## 2.1 为什么线性模型也会过拟合？（PPT 6）
 
-设特征向量为 $\mathbf{x}$，权重为 $\mathbf{w}$；通常把偏置项吸收到向量中，即 $x_0=1$。
+**Linearly Separable（线性可分）**：存在一条直线（二维）或超平面（高维），能把训练数据中的两类完全分开。
 
-模型先计算一个 **score（分数）**：
+即使已经正确分类所有训练样本，Cross-Entropy 仍可能继续下降：
 
-$$
-z=\mathbf{w}^{T}\mathbf{x}.
-$$
+- 对 Class 1 样本，模型希望预测概率无限接近 $1$。
+- 对 Class 0 样本，模型希望预测概率无限接近 $0$。
+- 模型可能通过放大权重，使概率变得越来越极端，而不需要改变分类边界。
 
-再用 Sigmoid 把分数变成 Class 1 的预测概率：
+因此，**训练集完全分对，不代表泛化一定好**。
 
-$$
-p_1=p(y=1\mid\mathbf{x},\mathbf{w})
-=\sigma(z)
-=\frac{e^z}{1+e^z}
-=\frac{1}{1+e^{-z}}.
-$$
+## 2.2 增大权重的效果（PPT 7–10）
 
-因此：
+课件依次展示：
 
-$$
-\operatorname{logit}(p_1)=\ln\frac{p_1}{1-p_1}=\mathbf{w}^{T}\mathbf{x},
-\qquad p_0=1-p_1.
-$$
-
-如果用 $0.5$ 作为分类阈值：
-
-- $\mathbf{w}^{T}\mathbf{x}\geq 0$：预测 Class 1。
-- $\mathbf{w}^{T}\mathbf{x}<0$：预测 Class 0。
-- **Decision Boundary（决策边界）**：$\mathbf{w}^{T}\mathbf{x}=0$。
-
-### 1.2 Cross-Entropy Loss（PPT 第 4 页）
-
-给定 $N$ 个训练样本 $\{(\mathbf{x}^{(i)},y^{(i)})\}_{i=1}^{N}$，其中 $y^{(i)}\in\{0,1\}$，课件使用的**总损失（求和形式）**为：
-
-$$
-E(\mathbf{w})=-\sum_{i=1}^{N}
-\left[
-y^{(i)}\ln p_1^{(i)}+
-(1-y^{(i)})\ln(1-p_1^{(i)})
-\right],
-$$
-
-其中 $p_1^{(i)}=p(y=1\mid\mathbf{x}^{(i)},\mathbf{w})$。
-
-**直觉：** 正确标签的预测概率越低，损失越大。例如真实标签 $y=1$ 时，单个样本的损失就是 $-\ln p_1$。训练模型的目标是降低**训练集**上的损失。
-
-> **易混点：** 第 4 页的 Cross-Entropy 是求和；下一页的 Empirical Risk 写成平均值 $1/N$。两种归一化方式不同，但对固定训练集、没有其他项时，最小化的位置相同；加入正则项时，要留意 $\lambda$ 与损失的尺度。
-
-### 1.3 Training Error / Empirical Risk（PPT 第 5 页）
-
-$$
-\widehat E(\mathbf{w})=
-\frac{1}{N}\sum_{i=1}^{N}
-F\!\left(g(\mathbf{x}^{(i)}),y^{(i)}\right).
-$$
-
-- $g(\mathbf{x})$：模型的预测函数。
-- $F(\cdot,\cdot)$：用于衡量预测误差的 Error Function，例如某种分类损失。
-- $\widehat E$：在**现有训练样本**上计算出来的平均误差。
-
-**特别注意：** Training Error / Empirical Risk 用的是 **Training Set，不是 Test Set**。
-
-### 1.4 Generalisation Error / Population Risk（PPT 第 5 页）
-
-$$
-E(\mathbf{w})=
-\mathbb{E}_{(\mathbf{x},y)\sim p(\mathbf{x},y)}
-\left[F(g(\mathbf{x}),y)\right].
-$$
-
-它衡量的是模型在真实数据分布中的**期望误差**，而不是只在已见过的训练集上的误差。课件指出：**Generalisation Error 小，说明模型泛化得好。**
-
-Generalisation Gap（泛化差距）：
-
-$$
-\operatorname{Generalisation\ Gap}
-=E(\mathbf{w})-\widehat E(\mathbf{w}).
-$$
-
-当训练误差很小、真实分布上的误差却很大时，泛化差距可能很大。
-
-### 1.5 Inductive Bias（归纳偏置）（PPT 第 5–6 页）
-
-**Inductive Bias** 指学习算法为了从有限训练数据推断未见过的数据，而采用的假设或偏好。
-
-Logistic Regression 的一个强归纳偏置是：**在当前输入特征空间中，Decision Boundary 是线性的。**
-
-这既是优点（模型相对简单），也可能成为局限（无法直接表达复杂的非线性边界）。
-
----
-
-## 2. Logistic Regression 为什么也会 Overfit？（PPT 第 6–10、13 页）
-
-### 2.1 线性可分时会出现什么？（PPT 第 6 页）
-
-**Linearly Separable（线性可分）**：可以找到一条直线（二维情形）或超平面（更高维），把训练数据中的两类分开。
-
-课件强调：**即使 Logistic Regression 具有线性决策边界，也依然可能出现过拟合。**
-
-原因是 Cross-Entropy 不仅关心“分类对没对”，也关心预测概率：
-
-- 对真实 Class 1 的样本，模型希望 $p_1$ 越接近 $1$ 越好。
-- 对真实 Class 0 的样本，模型希望 $p_1$ 越接近 $0$ 越好。
-- 在线性可分的训练集上，即使已经分对所有点，继续增大权重的绝对值，仍可以让预测概率更极端，并继续降低 Cross-Entropy。
-
-### 2.2 权重越大，Sigmoid 会怎样？（PPT 第 7–10 页）
-
-原课件展示了以下四组权重：
-
-| PPT 页 | 权重 $\mathbf{w}$ | 图上展示的现象 |
+| PPT | 权重 $\mathbf{w}$ | 预测概率的变化 |
 |---|---|---|
-| 第 7 页 | $(0.5,0.5,0.5)^T$ | Sigmoid 变化相对平滑；概率从 0 到 1 的过渡区域较宽。 |
-| 第 8 页 | $(3,3,3)^T$ | 过渡区域变窄，预测更接近 0 或 1。 |
-| 第 9 页 | $(10,10,10)^T$ | 过渡极陡，Sigmoid 更接近 Step Function（阶跃函数）。 |
-| 第 10 页 | $(-10,-10,-10)^T$ | 概率方向反转；边界仍然很陡。 |
+| 7 | $(0.5,0.5,0.5)^T$ | Sigmoid 比较平缓，概率过渡区较宽 |
+| 8 | $(3,3,3)^T$ | 曲线更陡，概率更接近 $0$ 或 $1$ |
+| 9 | $(10,10,10)^T$ | 曲线接近 Step Function（阶跃函数） |
+| 10 | $(-10,-10,-10)^T$ | 曲线很陡，但两侧预测类别方向反转 |
 
-**理解补充：** 固定某个输入 $\mathbf{x}$，设原来的 score 是 $z=\mathbf{w}^{T}\mathbf{x}$。如果把所有权重乘以正数 $c$，则：
+假设把权重同时乘上一个正数 $c$：
 
 $$
-z'=(c\mathbf{w})^T\mathbf{x}=cz,
-\qquad p_1'=\sigma(cz).
+z'= (c\mathbf{w})^T\mathbf{x}=cz
 $$
 
-- 当 $c>1$，且 $z>0$ 时，$p_1'$ 更接近 $1$。
-- 当 $c>1$，且 $z<0$ 时，$p_1'$ 更接近 $0$。
-- $c>0$ 时，$cz=0$ 与 $z=0$ 表示**同一条决策边界**。因此概率可以变得越来越极端，**即使分类线没有动**。
-- 当 $c<0$，score 的符号反转，预测两侧也会互换。第 10 页的例子就是这种情况。
+$$
+p_1'=\frac{1}{1+e^{-cz}}
+$$
 
-### 2.3 为什么这有风险？（PPT 第 10、13 页）
+- 当 $c>1$，正的 $z$ 对应概率更接近 $1$，负的 $z$ 对应概率更接近 $0$。
+- $c>0$ 时，$cz=0$ 与 $z=0$ 的决策边界**完全相同**。
+- 所以**决策边界不变，概率却可以越来越极端**。
+- 如果权重整体乘负数，score 符号反转，预测类别也会交换。
 
-Sigmoid 越接近阶跃函数，模型就越容易给出接近 $0$ 或 $1$ 的极端概率。课件的表述是：这会使预测概率失去应有的意义。
-
-**理解补充：** 这里并不意味着“所有大权重都必然过拟合”；重点是：在课件的线性可分场景中，**仅靠最小化训练 Cross-Entropy，不能有效约束权重的规模**。这可能损害模型在未见过的数据上的表现与概率可信度。
+**结论（PPT 10、13）：** Sigmoid 越像阶跃函数，模型给出的概率就越极端。在线性可分训练数据上，只最小化 Cross-Entropy 可能使权重持续增大，需要 Regularisation 约束权重。
 
 ---
 
-## 3. Regularisation：L2 / Weight Decay（PPT 第 11–13 页）
+# 3. L2 Regularisation / Weight Decay（PPT 11–13）
 
-### 3.1 核心思想（PPT 第 11 页）
+## 3.1 正则化后的目标函数（PPT 11）
 
-为了不让权重变得过大，在原始 Cross-Entropy 后面加一个惩罚项：
+在 Cross-Entropy 后面加上惩罚项：
 
 $$
-\boxed{\widetilde E(\mathbf{w})
-=E(\mathbf{w})+\frac{\lambda}{2}\lVert\mathbf{w}\rVert_2^2}
+\tilde{E}(\mathbf{w})=E(\mathbf{w})+\frac{\lambda}{2}\|\mathbf{w}\|_2^2
 $$
 
 其中：
 
 $$
-\lVert\mathbf{w}\rVert_2^2
-=\mathbf{w}^T\mathbf{w}
-=\sum_{j=0}^{d}w_j^2.
+\|\mathbf{w}\|_2^2=\mathbf{w}^T\mathbf{w}=\sum_{j=0}^{d}w_j^2
 $$
 
-展开成课件的形式：
+展开为：
 
 $$
-\widetilde E(\mathbf{w})
-=-\sum_{i=1}^{N}\left[
- y^{(i)}\ln p_1^{(i)}+
- (1-y^{(i)})\ln(1-p_1^{(i)})
-\right]
-+\frac{\lambda}{2}\sum_{j=0}^{d}w_j^2.
+\tilde{E}(\mathbf{w})=-\sum_{i=1}^{N}\left[y^{(i)}\ln p_1^{(i)}+(1-y^{(i)})\ln(1-p_1^{(i)})\right]+\frac{\lambda}{2}\sum_{j=0}^{d}w_j^2
 $$
 
-两个部分各管一件事：
+- **第一项 $E(\mathbf{w})$**：让预测尽量符合训练集。
+- **第二项**：让过大的权重受到惩罚。
+- $\lambda$ 是 **Hyperparameter（超参数）**，控制惩罚强度。
 
-| 目标函数部分 | 作用 |
+| $\lambda$ | 含义 |
 |---|---|
-| $E(\mathbf{w})$ | 让模型尽量拟合训练数据（减小 Cross-Entropy）。 |
-| $\frac{\lambda}{2}\lVert\mathbf{w}\rVert_2^2$ | 惩罚权重过大，限制模型过度自信。 |
+| $0$ | 不使用正则化 |
+| 较小 | 惩罚较弱，更重视拟合训练集 |
+| 较大 | 惩罚较强，可能抑制过拟合；过大则可能欠拟合 |
 
-**$\lambda$（Lambda）是 Hyperparameter（超参数）**，控制正则化的强度：
+**易错点：** $\|\mathbf{w}\|_2$ 才是 L2 Norm，目标函数实际上使用其**平方**。课件把 $w_0$ 也纳入求和，本节推导沿用这一约定。
 
-- $\lambda=0$：没有 L2 正则化。
-- $\lambda$ 较小：主要关注训练损失，对权重限制较弱。
-- $\lambda$ 较大：更强烈地惩罚大权重，但太大也可能使模型欠拟合。
+## 3.2 加入 L2 后的 Gradient（PPT 12）
 
-**公式记号注意：** 原 PPT 第 11 页在文字里把 $\mathbf{w}^T\mathbf{w}$ 称作“L2 norm”；严格地说，$\lVert\mathbf{w}\rVert_2=\sqrt{\sum_j w_j^2}$ 才是 L2 范数，而公式用的是**L2 范数的平方**。这里按原目标函数保留平方惩罚的数学含义。
-
-> **理解补充：** 课件的求和 $\sum_{j=0}^{d}$ 包括 $w_0$。实际实现中也经常不对偏置项 $w_0$ 做正则化，但这属于实现选项，**本节推导遵循 PPT 的 $\lambda\mathbf{w}$ 和 $\lambda I$ 形式**。
-
-### 3.2 Gradient（梯度）怎样改变？（PPT 第 12 页）
-
-你在 2a 学过，原始 Cross-Entropy 的梯度是：
+原始 Cross-Entropy 的 Gradient：
 
 $$
-\nabla E(\mathbf{w})
-=\sum_{i=1}^{N}
-(p_1^{(i)}-y^{(i)})\mathbf{x}^{(i)}.
+\nabla E(\mathbf{w})=\sum_{i=1}^{N}(p_1^{(i)}-y^{(i)})\mathbf{x}^{(i)}
 $$
 
-因为：
+正则项的一阶导数：
 
 $$
-\nabla_{\mathbf{w}}
-\left(\frac{\lambda}{2}\mathbf{w}^T\mathbf{w}\right)
-=\lambda\mathbf{w},
-$$
-
-所以加入 L2 后：
-
-$$
-\boxed{\nabla\widetilde E(\mathbf{w})
-=\sum_{i=1}^{N}
-(p_1^{(i)}-y^{(i)})\mathbf{x}^{(i)}
-+\lambda\mathbf{w}.}
-$$
-
-理解为：**原来的梯度 + 正则项自己的梯度**。
-
-因此 Gradient Descent 更新变为：
-
-$$
-\mathbf{w}_{\text{new}}
-=\mathbf{w}_{\text{old}}
--\eta\left[
-\sum_{i=1}^{N}(p_1^{(i)}-y^{(i)})\mathbf{x}^{(i)}
-+\lambda\mathbf{w}_{\text{old}}
-\right],
-$$
-
-其中 $\eta$ 是 Learning Rate（学习率）。上式是根据 PPT 梯度写出的**理解补充**。
-
-### 3.3 Hessian（海森矩阵）怎样改变？（PPT 第 12 页）
-
-原来的 Hessian 是：
-
-$$
-H_E(\mathbf{w})
-=\sum_{i=1}^{N}
- p_1^{(i)}(1-p_1^{(i)})
- \mathbf{x}^{(i)}\mathbf{x}^{(i)T}.
-$$
-
-L2 惩罚项的二阶导数是：
-
-$$
-H_{\frac{\lambda}{2}\lVert\mathbf{w}\rVert_2^2}
-=\lambda I.
+\nabla\left(\frac{\lambda}{2}\mathbf{w}^T\mathbf{w}\right)=\lambda\mathbf{w}
 $$
 
 所以：
 
 $$
-\boxed{H_{\widetilde E}(\mathbf{w})
-=\sum_{i=1}^{N}
- p_1^{(i)}(1-p_1^{(i)})
- \mathbf{x}^{(i)}\mathbf{x}^{(i)T}
-+\lambda I.}
+\nabla\tilde{E}(\mathbf{w})=\sum_{i=1}^{N}(p_1^{(i)}-y^{(i)})\mathbf{x}^{(i)}+\lambda\mathbf{w}
 $$
 
-- $I$：Identity Matrix（单位矩阵），对角线为 $1$，其余元素为 $0$。
-- **Gradient Descent** 主要使用 Gradient。
-- **Newton–Raphson / IRLS** 需要 Gradient 和 Hessian。
+**记忆：新 Gradient = 原 Gradient + $\lambda\mathbf{w}$。**
 
-**课件排版备注：** 第 12 页梯度公式出现 $y^{(t)}$，但同页和前后文都以第 $i$ 个样本为求和对象；本笔记统一写为 $y^{(i)}$，并在此注明该处记号差异。
+使用 Gradient Descent 时：
 
-### 3.4 这一部分的结论（PPT 第 13 页）
+$$
+\mathbf{w}_{new}=\mathbf{w}_{old}-\eta\nabla\tilde{E}(\mathbf{w}_{old})
+$$
 
-**Cross-Entropy 单独使用时，线性可分训练数据也可能带来过拟合问题；Weight Decay Regularisation 可以帮助缓解。**
+这里 $\eta$ 是 Learning Rate。该更新式是根据课件梯度公式直接写出的。
+
+## 3.3 加入 L2 后的 Hessian（PPT 12）
+
+原始 Hessian：
+
+$$
+H_E(\mathbf{w})=\sum_{i=1}^{N}p_1^{(i)}(1-p_1^{(i)})\mathbf{x}^{(i)}(\mathbf{x}^{(i)})^T
+$$
+
+L2 正则项的二阶导数为 $\lambda I$。因此：
+
+$$
+H_{\tilde{E}}(\mathbf{w})=\sum_{i=1}^{N}p_1^{(i)}(1-p_1^{(i)})\mathbf{x}^{(i)}(\mathbf{x}^{(i)})^T+\lambda I
+$$
+
+- $I$：Identity Matrix（单位矩阵），主对角线为 $1$，其余为 $0$。
+- **Gradient Descent** 使用 Gradient；**Newton–Raphson / IRLS** 还需要 Hessian。
+- **记忆：新 Hessian = 原 Hessian + $\lambda I$。**
+
+> 原课件第 12 页梯度中有一处 $y^{(t)}$，结合该页的样本求和符号，这里统一写为 $y^{(i)}$。
 
 ---
 
-## 4. 为什么需要 Nonlinear Transformations？（PPT 第 15–20 页）
+# 4. Underfitting 与非线性变换的必要性（PPT 15–20）
 
-### 4.1 线性可分与非线性可分（PPT 第 15–18 页）
+## 4.1 Linearly / Nonlinearly Separable（PPT 15–18）
 
-在原始二维输入空间 $(x_1,x_2)$ 中，Logistic Regression 的分界线是：
-
-$$
-w_0+w_1x_1+w_2x_2=0.
-$$
-
-**第 15 页：** 两类点可以被一条直线分开，线性模型就足够。
-
-**第 16 页：** 数据的分类形状比较复杂，一条直线不能把两类很好地分开；若坚持只用这类边界，就可能 **Underfit（欠拟合）**。
-
-**第 17 页：** 在一维 $x_1$ 上，蓝点在左、橙点在右，只需**一个阈值**就能分开。
-
-**第 18 页：** 在一维 $x_1$ 上，蓝点在左右两侧、橙点在中间，一个阈值不够，因为分类需要两个分界点。
-
-核心问题不是“优化算法不够厉害”，而是：**当前特征下，模型能表示的决策边界不够灵活。**
-
-### 4.2 把一维变成二维：Basis Expansion（PPT 第 19–20 页）
-
-第 18 页的例子是一维非线性可分问题。课件引入第二个特征：
+两个输入变量时，普通 Logistic Regression 的决策边界为：
 
 $$
-x_2=x_1^2.
+w_0+w_1x_1+w_2x_2=0
 $$
 
-把一个原始输入 $x_1$ 转换为：
+- **PPT 15**：二维数据可以用直线分开，线性模型足够。
+- **PPT 16**：两类样本分布复杂，单条直线难以分开，可能 **Underfit（欠拟合）**。
+- **PPT 17**：一维蓝点在左、橙点在右，一个阈值即可分开。
+- **PPT 18**：一维蓝点在左右、橙点在中间，需要两个阈值；单个线性边界不够。
+
+这里的核心问题是**模型的表示能力不足**，并不是把 Gradient Descent 跑得更久就一定能解决。
+
+## 4.2 Feature Transform / Basis Expansion（PPT 19–20）
+
+给原始变量 $x_1$ 增加平方项：
 
 $$
-\boxed{\boldsymbol\phi(\mathbf{x})
-=\begin{pmatrix}x_1\\x_1^2\end{pmatrix}.}
+\phi(\mathbf{x})=(x_1,x_1^2)^T
 $$
 
 这里：
 
-- $\boldsymbol\phi$（Phi）叫 **Feature Transform / Nonlinear Transformation（特征变换）**。
-- $x_1$、$x_1^2$ 是构造出来的 **Basis Functions（基函数）** 对应的特征。
-- 新的坐标空间叫 **Feature Space / Embedding（特征空间 / 嵌入空间）**。
+- $\phi$：Feature Transform（特征变换）函数。
+- $x_1$ 和 $x_1^2$：由原始输入构造的新特征（Basis Functions 的结果）。
+- 新的二维空间：Feature Space / Embedding（特征空间 / 嵌入空间）。
 
-原来所有点都在一条数轴上；变换后，每个点变成二维坐标 $(x_1,x_1^2)$，落在一条抛物线上。
+**PPT 20 的图：** 原本在一维数轴上无法被一个阈值分开的数据，映射到坐标 $(x_1,x_1^2)$ 后，可以在新空间用**一条直线**分开。
 
-**第 20 页的关键图：** 在新二维空间中，可以画一条**直线**把两类点分开。因此，新的空间里使用线性模型，仍能解决原空间中需要非线性分界的问题。
-
-### 4.3 最容易理解错的一句话
-
-> **模型在 Feature Space 中线性，不等于它在原始输入 $x$ 中也是线性的。**
-
-例如，新空间内的直线：
+假设该直线表示为：
 
 $$
 w_0+w_1\phi_1(\mathbf{x})+w_2\phi_2(\mathbf{x})=0
 $$
 
-代入 $\phi_1(\mathbf{x})=x_1$、$\phi_2(\mathbf{x})=x_1^2$，就变成：
+把 $\phi_1(\mathbf{x})=x_1$、$\phi_2(\mathbf{x})=x_1^2$ 代入：
 
 $$
-w_0+w_1x_1+w_2x_1^2=0.
+w_0+w_1x_1+w_2x_1^2=0
 $$
 
-**这是原始变量 $x_1$ 的二次方程，不再是 $x_1$ 的一次线性边界。**
+**最重要的结论：在新 Feature Space 中是线性边界，在原始空间中却可以是非线性边界。**
 
 ---
 
-## 5. Polynomial Features：如何设计 $\boldsymbol\phi(\mathbf{x})$？（PPT 第 21–25 页）
+# 5. 如何构造 Polynomial Features（PPT 21–22、26–27）
 
-### 5.1 一般原则（PPT 第 21–22 页）
+## 5.1 最高 $p$ 次多项式（PPT 21–22）
 
-如果希望原始空间中的决策边界可以是**最高 $p$ 次多项式（Polynomial of Order $p$）**，则构造 $\boldsymbol\phi(\mathbf{x})$ 时，包括能从原始输入变量生成的**所有次数不超过 $p$ 的项**。
+如果需要原始空间中的最高 $p$ 次多项式决策边界，构造 $\phi(\mathbf{x})$ 时包含**所有次数不超过 $p$ 的项**（包含常数项）。
 
-这里的次数是**一项中各个变量指数的总和**。
+例：$x_1^2$ 和 $x_1x_2$ 都是二次项；$x_1^2x_2$ 是三次项。
 
-例如：
-
-- $x_1^2$ 是 2 次项。
-- $x_1x_2$ 是 2 次项。
-- $x_1^2x_2$ 是 3 次项。
-
-### 5.2 只有一个输入变量，最高 2 次（PPT 第 21 页）
-
-原始输入（包含常数特征）：
-
-$$
-\mathbf{x}=(1,x_1)^T.
-$$
-
-变换后：
-
-$$
-\boxed{\boldsymbol\phi(\mathbf{x})=(1,x_1,x_1^2)^T.}
-$$
-
-模型的分界式：
-
-$$
-\mathbf{w}^T\boldsymbol\phi(\mathbf{x})=0
-\iff w_0+w_1x_1+w_2x_1^2=0.
-$$
-
-### 5.3 两个输入变量，最高 2 次（PPT 第 21 页）
-
-$$
-\mathbf{x}=(1,x_1,x_2)^T
-$$
-
-$$
-\boxed{\boldsymbol\phi(\mathbf{x})
-=(1,x_1,x_2,x_1^2,x_2^2,x_1x_2)^T.}
-$$
-
-- 常数项：$1$
-- 一次项：$x_1,x_2$
-- 二次项：$x_1^2,x_2^2,x_1x_2$
-
-得到的原空间决策边界是：
-
-$$
-w_0+w_1x_1+w_2x_2+w_3x_1^2+w_4x_2^2+w_5x_1x_2=0.
-$$
-
-这可以表达比一条直线丰富得多的曲线。
-
-### 5.4 两个输入变量，最高 3 次（PPT 第 22 页）
-
-$$
-\boxed{\boldsymbol\phi(\mathbf{x})=
-(1,x_1,x_2,x_1^2,x_2^2,x_1x_2,
- x_1^3,x_2^3,x_1x_2^2,x_1^2x_2)^T.}
-$$
-
-比 2 次多出的 3 次项为：
-
-$$
-x_1^3,\quad x_2^3,\quad x_1x_2^2,\quad x_1^2x_2.
-$$
-
-**课件结论：** 原始空间里次数不超过 $p$ 的多项式决策边界，在包含相应多项式项的 $\boldsymbol\phi(\mathbf{x})$ 空间中，对变换后的特征而言是线性的。
-
-### 5.5 课件完整数值例子：边界 $2$ 和 $5$ 从哪里来？（PPT 第 23–25 页）
-
-给定：
-
-$$
-\mathbf{w}^T=(10,-7,1),
-\qquad\boldsymbol\phi(\mathbf{x})=(1,x_1,x_1^2)^T.
-$$
-
-在变换后的 Feature Space 里，线性边界为：
-
-$$
-\mathbf{w}^T\boldsymbol\phi(\mathbf{x})=0.
-$$
-
-**第 1 步：代入权重。**
-
-$$
-10\cdot1-7\phi_1(\mathbf{x})+\phi_2(\mathbf{x})=0.
-$$
-
-**第 2 步：把基函数换回原来的 $x_1$。**
-
-$$
-10-7x_1+x_1^2=0.
-$$
-
-**第 3 步：解二次方程。**
-
-$$
-x_1=\frac{7\pm\sqrt{(-7)^2-4\cdot1\cdot10}}{2\cdot1}
-=\frac{7\pm3}{2}.
-$$
-
-因此：
-
-$$
-\boxed{x_1=2\quad\text{或}\quad x_1=5.}
-$$
-
-这意味着**新空间中的一条直线**，在**原始一维空间中对应两个决策阈值**：
-
-$$
-\underbrace{x_1<2}_{\text{一侧}}
-\quad\big|\quad
-\underbrace{2<x_1<5}_{\text{另一侧}}
-\quad\big|\quad
-\underbrace{x_1>5}_{\text{一侧}}.
-$$
-
-若按 $\mathbf{w}^T\boldsymbol\phi(\mathbf{x})\geq0$ 预测 Class 1，那么 $x_1\leq2$ 和 $x_1\geq5$ 处预测 Class 1，$2<x_1<5$ 预测 Class 0（等号按本课前面约定归为 Class 1）。
-
-**第 24 页图像对应：** 左图在 $(\phi_1,\phi_2)$ 空间画直线；右图在原始 $x_1$ 轴上看到两个分界位置 $2$、$5$。
-
-**第 25 页强调：** 如果变换里包含某个基函数，原始空间的边界表达式就可以包含与之对应的项。例如加入 $x_1^2$，边界就可以出现二次项。
-
----
-
-## 6. 非线性变换不一定是多项式，也不一定升维（PPT 第 26–27 页）
-
-### 6.1 Other Nonlinear Transformations（PPT 第 26 页）
-
-多项式只是一种选择。课件给出的非多项式例子：
+**一个变量，最高二次（PPT 21）：**
 
 $$
 \mathbf{x}=(1,x_1)^T
-\longrightarrow
-\boldsymbol\phi(\mathbf{x})=(1,x_1,e^{x_1})^T.
 $$
 
-也就是说，原始输入变量可以变成 $x_1^2$、$x_1^3$，也可以变成 $e^{x_1}$ 等其他非线性函数。
+$$
+\phi(\mathbf{x})=(1,x_1,x_1^2)^T
+$$
 
-**重点不是固定使用平方，而是选择能帮助模型表示目标边界的 Feature Transform。**
-
-### 6.2 Dimensionality of the Feature Space（PPT 第 27 页）
-
-通常 Nonlinear Transformation 会让特征维度增加，但**并不一定**。
-
-课件举例：
+**两个变量，最高二次（PPT 21）：**
 
 $$
 \mathbf{x}=(1,x_1,x_2)^T
-\longrightarrow
-\boldsymbol\phi(\mathbf{x})=(1,x_1,x_2^2)^T.
 $$
 
-原输入与新特征都是 3 个分量，只是把 $x_2$ 替换成 $x_2^2$。如果问题不需要 $x_1^2$ 或 $x_1x_2$，就没必要强制包含这些特征。
+$$
+\phi(\mathbf{x})=(1,x_1,x_2,x_1^2,x_2^2,x_1x_2)^T
+$$
 
-不过课件也指出：**在实际问题中，通常事先不知道哪些基函数最有用，所以经常会构造更高维的嵌入。**
+对应决策边界：
 
----
+$$
+w_0+w_1x_1+w_2x_2+w_3x_1^2+w_4x_2^2+w_5x_1x_2=0
+$$
 
-## 7. 真正训练时该怎么用？（PPT 第 28–31 页）
+**两个变量，最高三次（PPT 22）：**
 
-### 7.1 四步流程（PPT 第 28 页）
+$$
+\phi(\mathbf{x})=(1,x_1,x_2,x_1^2,x_2^2,x_1x_2,x_1^3,x_2^3,x_1x_2^2,x_1^2x_2)^T
+$$
 
-**Step 1 — Choose a Nonlinear Transformation（选择变换）**
+注意三次多项式中也保留一次项、二次项和常数项。
+
+**原理：** 在 Feature Space 中，模型只是对各个变换后的特征作加权求和；代入原始变量后，就能表示非线性多项式边界。
+
+## 5.2 不一定使用多项式（PPT 26）
+
+课件给出的另一种变换：
+
+$$
+\mathbf{x}=(1,x_1)^T
+$$
+
+$$
+\phi(\mathbf{x})=(1,x_1,e^{x_1})^T
+$$
+
+因此变换也可以包含指数函数等非多项式特征。
+
+## 5.3 不一定增加维度（PPT 27）
 
 例如：
 
 $$
-\boldsymbol\phi(\mathbf{x})=(1,x_1,x_1^2)^T.
+(1,x_1,x_2)^T\ \longrightarrow\ (1,x_1,x_2^2)^T
 $$
 
-**Step 2 — Transform the Training Set（转换训练集）**
+前后都只有三个分量。实际中往往不知道应保留哪些特征，所以会构造较高维的 Feature Space。
 
-原数据：
+---
 
-$$
-\mathcal{T}=\{(\mathbf{x}^{(1)},y^{(1)}),\ldots,
-(\mathbf{x}^{(N)},y^{(N)})\}.
-$$
+# 6. 课件重点例题：为什么有两个决策边界？（PPT 23–25）
 
-转换后：
+已知权重和特征变换：
 
 $$
-\boxed{\mathcal{T}_{\phi}=
-\{(\boldsymbol\phi(\mathbf{x}^{(1)}),y^{(1)}),\ldots,
-(\boldsymbol\phi(\mathbf{x}^{(N)}),y^{(N)})\}.}
-$$
-
-**注意：** 变的是输入特征；样本标签 $y^{(i)}$ 不变。
-
-**Step 3 — Train a Linear Model in the New Space（在新空间训练线性模型）**
-
-使用之前学过的学习算法，最小化：
-
-$$
-\underset{\mathbf{w}}{\operatorname{argmin}}\ E(\mathbf{w})
-\quad\text{或}\quad
-\underset{\mathbf{w}}{\operatorname{argmin}}\ \widetilde E(\mathbf{w}).
-$$
-
-可用 Gradient Descent 或 Newton–Raphson / IRLS 等方法。
-
-**Step 4 — Express the Boundary Using the Original Variables（换回原始变量）**
-
-$$
-w_0+w_1\phi_1(\mathbf{x})+w_2\phi_2(\mathbf{x})=0
+\mathbf{w}=(10,-7,1)^T
 $$
 
 $$
-\Downarrow
+\phi(\mathbf{x})=(1,x_1,x_1^2)^T
+$$
+
+**Step 1：在 Feature Space 中写出线性边界。**
+
+$$
+\mathbf{w}^T\phi(\mathbf{x})=0
 $$
 
 $$
-w_0+w_1x_1+w_2x_1^2=0.
+10-7\phi_1(\mathbf{x})+\phi_2(\mathbf{x})=0
 $$
 
-### 7.2 Logistic Regression 的 Hypothesis 怎样变？（PPT 第 29 页）
-
-**变换前：**
+**Step 2：用原始变量替换。**
 
 $$
-\operatorname{logit}(p_1)=\mathbf{w}^T\mathbf{x},
-\qquad
-p_1=\frac{e^{\mathbf{w}^T\mathbf{x}}}
-{1+e^{\mathbf{w}^T\mathbf{x}}}.
+10-7x_1+x_1^2=0
+$$
+
+**Step 3：解二次方程。**
+
+$$
+x_1=\frac{7\pm\sqrt{49-40}}{2}=\frac{7\pm3}{2}
+$$
+
+$$
+x_1=2,\qquad x_1=5
+$$
+
+因此在原始一维空间中，决策边界有两个：**$x_1=2$ 和 $x_1=5$**。
+
+还可以因式分解：
+
+$$
+\mathbf{w}^T\phi(\mathbf{x})=(x_1-2)(x_1-5)
+$$
+
+按照 $\mathbf{w}^T\phi(\mathbf{x})\geq0$ 预测 Class 1 的规则：
+
+| 原始输入范围 | 预测类别 |
+|---|---|
+| $x_1\leq2$ | Class 1 |
+| $2<x_1<5$ | Class 0 |
+| $x_1\geq5$ | Class 1 |
+
+**对应 PPT 24 的图：** 左边是 Feature Space 中的一条直线，右边却是原始 $x_1$ 轴上的两个分类阈值。**PPT 25 强调：在变换中加入 $x_1^2$，原始决策边界就能出现二次项。**
+
+---
+
+# 7. 在 Logistic Regression 中应用非线性变换（PPT 28–31）
+
+## 7.1 完整训练流程（PPT 28）
+
+1. **Choose a Feature Transform**：选择 $\phi(\mathbf{x})$，例如 $(1,x_1,x_1^2)^T$。
+2. **Transform the Training Set**：每个输入 $\mathbf{x}^{(i)}$ 替换为 $\phi(\mathbf{x}^{(i)})$，标签 $y^{(i)}$ 不变。
+3. **Train a Linear Model**：使用之前的 Cross-Entropy、Gradient Descent 或 Newton–Raphson / IRLS 训练。
+4. **Substitute Back**：将学到的 $\phi_j(\mathbf{x})$ 代回原始变量，得到原空间中的边界。
+
+变换后的训练集：
+
+$$
+T_{\phi}=\{(\phi(\mathbf{x}^{(1)}),y^{(1)}),\ldots,(\phi(\mathbf{x}^{(N)}),y^{(N)})\}
+$$
+
+## 7.2 Hypothesis / Score（PPT 29）
+
+**原来：**
+
+$$
+p_1=\frac{1}{1+e^{-\mathbf{w}^T\mathbf{x}}}
 $$
 
 **变换后：**
 
 $$
-\boxed{\operatorname{logit}(p_1)=\mathbf{w}^T\boldsymbol\phi(\mathbf{x})}
+p_1=\frac{1}{1+e^{-\mathbf{w}^T\phi(\mathbf{x})}}
+$$
+
+对应的 Log-odds：
+
+$$
+\ln\frac{p_1}{1-p_1}=\mathbf{w}^T\phi(\mathbf{x})
+$$
+
+**Sigmoid 没有换；变化的只是输入由 $\mathbf{x}$ 变成 $\phi(\mathbf{x})$。**
+
+## 7.3 Cross-Entropy（PPT 30）
+
+为简化记号，设：
+
+$$
+p_{\phi}^{(i)}=\frac{1}{1+e^{-\mathbf{w}^T\phi(\mathbf{x}^{(i)})}}
+$$
+
+那么变换后的训练损失是：
+
+$$
+E_{\phi}(\mathbf{w})=-\sum_{i=1}^{N}\left[y^{(i)}\ln p_{\phi}^{(i)}+(1-y^{(i)})\ln(1-p_{\phi}^{(i)})\right]
+$$
+
+**Cross-Entropy 形式不变**，只是预测概率现在基于变换后的特征计算。
+
+## 7.4 Gradient 与 Hessian（PPT 31）
+
+**Gradient：**
+
+$$
+\nabla E_{\phi}(\mathbf{w})=\sum_{i=1}^{N}(p_{\phi}^{(i)}-y^{(i)})\phi(\mathbf{x}^{(i)})
+$$
+
+**Hessian：**
+
+$$
+H_{E_{\phi}}(\mathbf{w})=\sum_{i=1}^{N}p_{\phi}^{(i)}(1-p_{\phi}^{(i)})\phi(\mathbf{x}^{(i)})\phi(\mathbf{x}^{(i)})^T
+$$
+
+**联系 2a / 2c：** 计算结构与之前完全一致，只是把每个样本的 $\mathbf{x}^{(i)}$ 替换成 $\phi(\mathbf{x}^{(i)})$。
+
+## 7.5 同时使用 L2（将 PPT 11–12 与 30–31 结合）
+
+$$
+\tilde{E}_{\phi}(\mathbf{w})=E_{\phi}(\mathbf{w})+\frac{\lambda}{2}\|\mathbf{w}\|_2^2
 $$
 
 $$
-\boxed{p_1=p(1\mid\boldsymbol\phi(\mathbf{x}),\mathbf{w})
-=\frac{e^{\mathbf{w}^T\boldsymbol\phi(\mathbf{x})}}
-{1+e^{\mathbf{w}^T\boldsymbol\phi(\mathbf{x})}}.}
-$$
-
-**记忆：** 把原来所有代表输入特征的 $\mathbf{x}$，换成新的 $\boldsymbol\phi(\mathbf{x})$。**Sigmoid 本身没有变。**
-
-### 7.3 Cross-Entropy Loss 怎样变？（PPT 第 30 页）
-
-原损失：
-
-$$
-E(\mathbf{w})=-\sum_{i=1}^{N}
-\left[y^{(i)}\ln p(1\mid\mathbf{x}^{(i)},\mathbf{w})
-+(1-y^{(i)})\ln(1-p(1\mid\mathbf{x}^{(i)},\mathbf{w}))\right].
-$$
-
-变换后的损失：
-
-$$
-\boxed{E_{\phi}(\mathbf{w})=-\sum_{i=1}^{N}
-\left[y^{(i)}\ln p(1\mid\boldsymbol\phi(\mathbf{x}^{(i)}),\mathbf{w})
-+(1-y^{(i)})\ln(1-p(1\mid\boldsymbol\phi(\mathbf{x}^{(i)}),\mathbf{w}))\right].}
-$$
-
-**损失函数的逻辑没变**；改变的是每个样本送入模型的特征。
-
-### 7.4 Gradient 和 Hessian 怎样变？（PPT 第 31 页）
-
-原模型的梯度和 Hessian：
-
-$$
-\nabla E(\mathbf{w})
-=\sum_{i=1}^{N}(p_1^{(i)}-y^{(i)})\mathbf{x}^{(i)},
+\nabla\tilde{E}_{\phi}(\mathbf{w})=\sum_{i=1}^{N}(p_{\phi}^{(i)}-y^{(i)})\phi(\mathbf{x}^{(i)})+\lambda\mathbf{w}
 $$
 
 $$
-H_E(\mathbf{w})
-=\sum_{i=1}^{N}p_1^{(i)}(1-p_1^{(i)})
-\mathbf{x}^{(i)}\mathbf{x}^{(i)T}.
+H_{\tilde{E}_{\phi}}(\mathbf{w})=\sum_{i=1}^{N}p_{\phi}^{(i)}(1-p_{\phi}^{(i)})\phi(\mathbf{x}^{(i)})\phi(\mathbf{x}^{(i)})^T+\lambda I
 $$
 
-变换后（此处 $p_{1,\phi}^{(i)}=p(1\mid\boldsymbol\phi(\mathbf{x}^{(i)}),\mathbf{w})$）：
-
-$$
-\boxed{\nabla E_{\phi}(\mathbf{w})
-=\sum_{i=1}^{N}
-(p_{1,\phi}^{(i)}-y^{(i)})\boldsymbol\phi(\mathbf{x}^{(i)}).}
-$$
-
-$$
-\boxed{H_{E_{\phi}}(\mathbf{w})
-=\sum_{i=1}^{N}
-p_{1,\phi}^{(i)}(1-p_{1,\phi}^{(i)})
-\boldsymbol\phi(\mathbf{x}^{(i)})
-\boldsymbol\phi(\mathbf{x}^{(i)})^T.}
-$$
-
-**这就是本节和 2a / 2c 的联系：** Gradient Descent、Newton–Raphson / IRLS **算法框架仍然可用**，只是训练时使用的特征从 $\mathbf{x}$ 换成 $\boldsymbol\phi(\mathbf{x})$。
-
-### 7.5 同时使用 Nonlinear Transformation 和 L2（综合理解）
-
-这是把课件的两个部分组合后的**理解补充**：
-
-$$
-\widetilde E_{\phi}(\mathbf{w})
-=E_{\phi}(\mathbf{w})+\frac{\lambda}{2}\lVert\mathbf{w}\rVert_2^2.
-$$
-
-$$
-\nabla\widetilde E_{\phi}(\mathbf{w})
-=\sum_{i=1}^{N}
-(p_{1,\phi}^{(i)}-y^{(i)})\boldsymbol\phi(\mathbf{x}^{(i)})
-+\lambda\mathbf{w}.
-$$
-
-$$
-H_{\widetilde E_{\phi}}(\mathbf{w})
-=\sum_{i=1}^{N}
-p_{1,\phi}^{(i)}(1-p_{1,\phi}^{(i)})
-\boldsymbol\phi(\mathbf{x}^{(i)})\boldsymbol\phi(\mathbf{x}^{(i)})^T
-+\lambda I.
-$$
-
-直觉：**变换让模型有能力学复杂边界；正则化帮助避免复杂边界过度适应训练集。**
+**非线性变换提高表达能力；L2 正则化限制权重过大。** 这三式为前后两部分公式的组合，课件没有单独列出。
 
 ---
 
-## 8. 变换以后，Logistic Regression 还是 Linear Model 吗？（PPT 第 32–33 页）
+# 8. 变换后还是 Linear Model 吗？（PPT 32–33）
 
-**答案：按照课件使用的定义，仍然是。**
-
-课件强调，“线性模型”通常指的是**对参数 $\mathbf{w}$ 线性（Linear in Parameters）**，而不是一定要对原始变量 $\mathbf{x}$ 线性。
+**是。课件所说的线性，主要指 Linear in Parameters（对参数线性）。**
 
 例如：
 
 $$
-z=w_0+w_1x_1+w_2x_1^2.
+z=w_0+w_1x_1+w_2x_1^2
 $$
 
-- 对 **$x_1$**：式子包含 $x_1^2$，是非线性的。
-- 对 **$w_0,w_1,w_2$**：每个参数只以一次方出现，且没有参数之间的乘积，所以 score 对参数仍是线性的。
+- 对原始输入 $x_1$：包含平方项，所以是非线性的。
+- 对参数 $w_0,w_1,w_2$：每个参数都只以一次方出现，因此 score 仍然对参数线性。
 
-更一般地：
+一般形式：
 
 $$
-z=\mathbf{w}^T\boldsymbol\phi(\mathbf{x})
-=\sum_{j}w_j\phi_j(\mathbf{x}).
+z=\mathbf{w}^T\phi(\mathbf{x})=\sum_{j=0}^{d}w_j\phi_j(\mathbf{x})
 $$
 
-因此新模型可以说：**Linear in Parameters, Nonlinear in Original Inputs**。
+Logistic Regression 在变换后的 Feature Space 中仍在学习线性边界，即使该边界在原始输入空间中可能不是直线。
 
-> **容易混淆的细节：** 这里说 Logistic Regression “线性”，指的是其 **logit / score 对参数线性、特征空间中的决策边界线性**；最终输出概率 $\sigma(z)$ 本身是 Sigmoid 非线性函数。这两句话并不矛盾。
+**补充区分：** 这里是说 score / log-odds 对参数线性；最后的概率 $p_1=\sigma(z)$ 本身仍是非线性的 Sigmoid。
 
-课件第 33 页还指出 Linear Models 的优点：学习算法通常相对高效；它们也可能具有较好的 Robustness（稳健性）与 Generalisation（泛化）表现。
+Linear Models 的优点（PPT 33）：学习算法常较高效，并可能具有较好的稳健性和泛化能力。
 
 ---
 
-## 9. Caveats：Nonlinear Transformations 的风险（PPT 第 34–35 页）
+# 9. Nonlinear Transformations 的风险（PPT 34–35）
 
-### 9.1 拟合得更好，不等于泛化得更好（PPT 第 34 页）
+**PPT 34：Linear Fit 与 4th Order Polynomial 对比。**
 
-课件对比了 **Linear Fit（线性拟合）** 与 **4th Order Polynomial（四次多项式）**：
+- 更高阶的 Polynomial 能拟合更弯曲的边界。
+- **训练集拟合得更好，不等于在新数据上泛化得更好。**
+- 高阶变换也可能导致 Feature Space 的维度很高。
 
-- 更高阶的多项式能够画出更弯曲的边界。
-- 它可能把训练集分得更精细，却不一定对新样本预测得更好。
-- 因此，提升表达能力也可能提高 Overfitting 风险。
+**PPT 35 总结：**
 
-**理解补充：** 评估是否泛化得好，需要依靠没有参与拟合的数据（例如 Validation / Test 的相应评估），而不能只看训练损失。
-
-### 9.2 特征空间可能非常高维（PPT 第 34 页）
-
-当输入变量很多、最高多项式次数 $p$ 又很高时，构造出的基函数可能非常多。课件强调这会带来维度问题。
-
-**理解补充（非课件公式）：** 如果有 $d$ 个原始变量，包含所有次数 $\leq p$ 的多项式项（包括常数项），特征数是：
-
-$$
-\binom{d+p}{p}.
-$$
-
-例如 $d=2,p=3$ 时，共有 $\binom{5}{3}=10$ 个特征，正好与第 22 页列出的 10 项一致。
-
-### 9.3 最后一页总结（PPT 第 35 页）
-
-1. **Regularisation** 可以帮助减轻 Overfitting。
-2. **Nonlinear Transformations** 可把原本非线性可分的问题变成在新 Feature Space 中线性可分的问题。
-3. 在新空间里继续使用原来的 **Logistic Regression** 学习线性决策边界。
-4. 这种思路也可以用于其他线性模型。
-5. 课件最后预告：**如何使用高维嵌入，而不必显式计算它？**（本份课件未展开方法。）
+1. Regularisation 有助于减少 Overfitting。
+2. Nonlinear Transformations 可使原空间中非线性可分的问题，在新的 Feature Space 中变得线性可分。
+3. 可以继续使用 Logistic Regression，在变换后的空间学习线性决策边界。
+4. 相同思路也适用于其他 Linear Models。
+5. 下一部分将讨论：怎样在不显式计算高维嵌入的情况下使用它（本课件没有展开）。
 
 ---
 
-## 10. 核心公式总表（复习时看这一页）
+# 10. 考前重点公式
 
-| 内容 | 记忆重点 | PPT |
+| 知识点 | 公式 | PPT |
 |---|---|---|
-| Logistic Score | $z=\mathbf{w}^T\mathbf{x}$ | 4 |
-| 预测概率 | $p_1=\sigma(z)=1/(1+e^{-z})$ | 4 |
+| Score | $z=\mathbf{w}^T\mathbf{x}$ | 4 |
+| Sigmoid | $p_1=1/(1+e^{-z})$ | 4 |
 | 决策边界 | $\mathbf{w}^T\mathbf{x}=0$ | 4、15 |
-| Generalisation Gap | $E(\mathbf{w})-\widehat E(\mathbf{w})$ | 5 |
-| L2 Regularisation | $\widetilde E=E+(\lambda/2)\lVert\mathbf{w}\rVert_2^2$ | 11 |
-| L2 Gradient | $\nabla\widetilde E=\nabla E+\lambda\mathbf{w}$ | 12 |
-| L2 Hessian | $H_{\widetilde E}=H_E+\lambda I$ | 12 |
-| Feature Transform | $\mathbf{x}\mapsto\boldsymbol\phi(\mathbf{x})$ | 19–21 |
-| 新的 Score | $z=\mathbf{w}^T\boldsymbol\phi(\mathbf{x})$ | 29 |
-| 新的 Gradient | $\sum_i(p_{1,\phi}^{(i)}-y^{(i)})\boldsymbol\phi(\mathbf{x}^{(i)})$ | 31 |
-| 新的 Hessian | $\sum_i p_{1,\phi}^{(i)}(1-p_{1,\phi}^{(i)})\boldsymbol\phi_i\boldsymbol\phi_i^T$ | 31 |
+| Generalisation Gap | $G=E(\mathbf{w})-\hat{E}(\mathbf{w})$ | 5 |
+| L2 Loss | $\tilde{E}=E+(\lambda/2)\|\mathbf{w}\|_2^2$ | 11 |
+| L2 Gradient | $\nabla\tilde{E}=\nabla E+\lambda\mathbf{w}$ | 12 |
+| L2 Hessian | $H_{\tilde{E}}=H_E+\lambda I$ | 12 |
+| Feature Transform | $\mathbf{x}\rightarrow\phi(\mathbf{x})$ | 19–21 |
+| 变换后 Score | $z=\mathbf{w}^T\phi(\mathbf{x})$ | 29 |
 
-其中最后一行的 $\boldsymbol\phi_i=\boldsymbol\phi(\mathbf{x}^{(i)})$。
+**记住三句话：**
 
-## 11. 考前最容易混淆的 6 组概念
-
-| 容易混淆的概念 | 正确区分 |
-|---|---|
-| **Training Error vs Generalisation Error** | 前者在训练集计算；后者是真实分布上的期望误差。 |
-| **Overfitting vs Underfitting** | 前者过于适应训练集；后者表达能力不足，难以拟合数据规律。 |
-| **Regularisation vs Nonlinear Transformation** | 前者限制权重；后者改变特征表达能力。 |
-| **Decision Boundary vs Probability** | 同一分界线也可以对应不同的概率陡峭程度（见第 7–9 页的正比例权重）。 |
-| **Original Space vs Feature Space** | 原空间中可能需要非线性曲线；新空间中可用线性边界。 |
-| **Linear in Parameters vs Linear in Inputs** | $\mathbf{w}^T\boldsymbol\phi(\mathbf{x})$ 对参数线性，但对原输入不一定线性。 |
-
-## 12. 自测题（根据课件知识整理）
-
-**Q1.** 线性可分的数据中，为什么 Logistic Regression 即使全分对了，还可能继续降低训练 Cross-Entropy？
-
-**Q2.** L2 Regularisation 为什么能抑制权重变大？加入后 Gradient 和 Hessian 分别增加什么？
-
-**Q3.** 原始输入为 $(1,x_1,x_2)^T$，如果要求最高 2 次的多项式边界，$\boldsymbol\phi(\mathbf{x})$ 包含哪 6 项？
-
-**Q4.** $\boldsymbol\phi(\mathbf{x})=(1,x_1,x_1^2)^T$，$\mathbf{w}^T=(10,-7,1)$：在原始 $x_1$ 空间中，边界在哪里？
-
-**Q5.** 使用了 $x_1^2$ 后，Logistic Regression 为什么仍可称为 Linear Model？
-
-**Q6.** 如果想把第 31 页的梯度用于变换后的训练集，原本的 $\mathbf{x}^{(i)}$ 应替换成什么？
-
-### 参考答案
-
-1. 因为损失不仅取决于分类正确与否，还取决于预测概率；增大某些权重可以让正确样本的预测概率更接近 $1$ 或 $0$。
-2. 在损失中增加 $\frac{\lambda}{2}\lVert\mathbf{w}\rVert_2^2$，使大权重受到更高惩罚；Gradient 增加 $\lambda\mathbf{w}$；Hessian 增加 $\lambda I$。
-3. $(1,x_1,x_2,x_1^2,x_2^2,x_1x_2)^T$。
-4. $x_1^2-7x_1+10=(x_1-2)(x_1-5)=0$，所以在 $2$ 和 $5$。
-5. 因为 $w_0+w_1x_1+w_2x_1^2$ 仍对参数 $w_0,w_1,w_2$ 线性；模型只是在原始输入上非线性。
-6. 替换成 $\boldsymbol\phi(\mathbf{x}^{(i)})$，并同时用变换后特征计算 $p_1^{(i)}$。
-
----
-
-**一句话复习：** **Regularisation 控制复杂度；Nonlinear Transformations 增强表达能力；在新的 Feature Space 里，我们仍然可以使用之前学过的 Logistic Regression、Cross-Entropy、Gradient Descent 和 Newton–Raphson / IRLS。**
-
-*注：本笔记依据用户提供的 35 页课件整理；原课件内容与额外学习解释已通过“理解补充”等标识区分。*
+- **Overfitting**：即使决策边界是线性的，权重也可能过大；用 **Regularisation** 缓解。
+- **Underfitting**：原来的线性边界不够灵活；用 **Nonlinear Transformations** 增强表达能力。
+- **变换后**：仍然可以使用之前学过的 Logistic Regression、Cross-Entropy、Gradient Descent 和 Newton–Raphson / IRLS。
