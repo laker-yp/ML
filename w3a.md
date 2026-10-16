@@ -15,11 +15,11 @@
 
 <a id="sec-1"></a>
 
-# 1. Logistic Regression 与泛化（PPT 4–5）
+# 1. Logistic Regression 与泛化
 
 <a id="sec-1-1"></a>
 
-## 1.1 Logistic Regression 的预测（PPT 4）
+## 1.1 Logistic Regression 的预测
 
 输入向量为 $\mathbf{x}$，权重向量为 $\mathbf{w}$，通常令 $x_0=1$ 来表示常数项（bias）。
 
@@ -47,7 +47,7 @@ $$
 
 <a id="sec-1-2"></a>
 
-## 1.2 Cross-Entropy Loss（PPT 4）
+## 1.2 Cross-Entropy Loss
 
 对于 $N$ 个训练样本：
 
@@ -63,7 +63,7 @@ $$
 
 <a id="sec-1-3"></a>
 
-## 1.3 Training Error 与 Generalisation Error（PPT 5）
+## 1.3 Training Error 与 Generalisation Error
 
 **Training Error / Empirical Risk（训练误差 / 经验风险）：**
 
@@ -99,7 +99,7 @@ $$
 
 <a id="sec-2"></a>
 
-# 2. Logistic Regression 的 Overfitting（PPT 6–10、13）
+# 2. Logistic Regression 的 Overfitting
 
 <a id="sec-2-1"></a>
 
@@ -139,7 +139,7 @@ $$
 
 <a id="sec-3-1"></a>
 
-## 3.1 正则化后的目标函数（PPT 11）
+## 3.1 正则化后的目标函数
 
 在 Cross-Entropy 后面加上惩罚项：
 
@@ -229,7 +229,7 @@ $$
 
 <a id="sec-4"></a>
 
-# 4. Underfitting 与非线性变换的必要性（PPT 15–20）
+# 4. Underfitting 与非线性变换的必要性
 
 <a id="sec-4-1"></a>
 
@@ -284,7 +284,7 @@ $$
 
 <a id="sec-5"></a>
 
-# 5. 如何构造 Polynomial Features（PPT 21–22、26–27）
+# 5. 如何构造 Polynomial Features
 
 <a id="sec-5-1"></a>
 
@@ -362,7 +362,7 @@ $$
 
 <a id="sec-6"></a>
 
-# 6. 课件重点例题：为什么有两个决策边界？（PPT 23–25）
+# 6. 课件重点例题：为什么有两个决策边界？
 
 已知权重和特征变换：
 
@@ -422,7 +422,7 @@ $$
 
 <a id="sec-7"></a>
 
-# 7. 在 Logistic Regression 中应用非线性变换（PPT 28–31）
+# 7. 在 Logistic Regression 中应用非线性变换
 
 <a id="sec-7-1"></a>
 
@@ -521,7 +521,7 @@ $$
 
 <a id="sec-8"></a>
 
-# 8. 变换后还是 Linear Model 吗？（PPT 32–33）
+# 8. 变换后还是 Linear Model 吗？
 
 **是。课件所说的线性，主要指 Linear in Parameters（对参数线性）。**
 
