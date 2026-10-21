@@ -21,29 +21,26 @@
 
 ## 1.1 Logistic Regression 的预测
 
-输入向量为 $\mathbf{x}$，权重向量为 $\mathbf{w}$，通常令 $x_0=1$ 来表示常数项（bias）。
-
 **Score：**
 
 $$
 z=\mathbf{w}^T\mathbf{x}
 $$
 
-**Class 1 的预测概率：**
+**预测为正确的概率为：**
 
 $$
 p_1=\frac{e^z}{1+e^z}=\frac{1}{1+e^{-z}}
 $$
 
-**Log-odds：**
+**Log-odds（把概率变成直线z）：**
 
 $$
 \ln\frac{p_1}{1-p_1}=\mathbf{w}^T\mathbf{x}
 $$
 
-- $z\geq 0$：预测 Class 1；$z<0$：预测 Class 0。
-- **Decision Boundary（决策边界）**：$\mathbf{w}^T\mathbf{x}=0$。
-- $p_0=1-p_1$。
+- $z\geq 0$时预测 Class 1
+- **Decision Boundary（决策边界）**：z=0
 
 <a id="sec-1-2"></a>
 
@@ -55,35 +52,33 @@ $$
 E(\mathbf{w})=-\sum_{i=1}^{N}\left[y^{(i)}\ln p_1^{(i)}+(1-y^{(i)})\ln(1-p_1^{(i)})\right]
 $$
 
-其中 $p_1^{(i)}$ 是模型对第 $i$ 个训练样本预测为 Class 1 的概率。
+ $p_1^{(i)}$ 是模型对第 $i$ 个训练样本预测为 Class 1 的概率。
 
-- 真实标签是 $1$：损失为 $-\ln p_1^{(i)}$，模型希望 $p_1^{(i)}$ 趋近 $1$。
-- 真实标签是 $0$：损失为 $-\ln(1-p_1^{(i)})$，模型希望 $p_1^{(i)}$ 趋近 $0$。
-- **Cross-Entropy 在此页使用求和形式**，并且是在训练集上计算的。
+- 真实标签是 $1$：损失为 $-\ln p_1^{(i)}$，那么模型认为的p1越接近1，E越接近0，，反之亦然
 
 <a id="sec-1-3"></a>
 
 ## 1.3 Training Error 与 Generalisation Error
 
-**Training Error / Empirical Risk（训练误差 / 经验风险）：**
+### **Training Error / Empirical Risk（训练误差 / 经验风险）：**
 
 $$
-\hat{E}(\mathbf{w})=\frac{1}{N}\sum_{i=1}^{N}F(g(\mathbf{x}^{(i)}),y^{(i)})
+\hat{E}(\mathbf{w})=\frac{1}{N}\sum_{i=1}^{N}F(f(\mathbf{x}^{(i)}),y^{(i)})
 $$
 
-- $g$：预测函数；$F$：衡量预测与标签差异的误差函数。
+- $f$：预测函数；$F$：计算误差的函数（比如平方差）。
 - **用 Training Set 计算，不是 Test Set。**
 
-**Generalisation Error / Population Risk（泛化误差 / 总体风险）：**
+### **Generalisation Error / Population Risk（泛化误差 / 总体风险）：**
 
 $$
 E(\mathbf{w})=\mathrm{E}_{(\mathbf{x},y)\sim p(\mathbf{x},y)}[F(g(\mathbf{x}),y)]
 $$
 
-- 表示在真实数据分布上的**期望误差**。
-- 泛化误差越小，模型对未见数据的预测通常越好。
+- 表示在`真实数据`分布上的**期望误差**。
+- 理想情况 无法计算
 
-**Generalisation Gap（泛化差距）：**
+### **Generalisation Gap（泛化差距）：**
 
 $$
 G=E(\mathbf{w})-\hat{E}(\mathbf{w})
@@ -91,9 +86,11 @@ $$
 
 训练误差小、泛化误差大时，$G$ 可能很大。
 
-> 注意：PPT 第 4 页的 $E(\mathbf{w})$ 是训练集 Cross-Entropy 总和；第 5 页复用了 $E(\mathbf{w})$ 表示总体风险。**应按所在公式区分，不要把两者当作同一个量。**
 
-**Inductive Bias（归纳偏置）**：学习算法为从有限样本推断未见数据而采用的假设。Logistic Regression 的重要假设是：**在当前特征空间中，决策边界是线性的。**
+### **Inductive Bias（归纳偏置）**：
+为从`有限样本`推断`未见数据`而采用的`假设`。
+
+Logistic Regression 的重要假设是：**在当前特征空间中，决策边界是线性的。**
 
 ---
 
@@ -103,33 +100,35 @@ $$
 
 <a id="sec-2-1"></a>
 
-## 2.1 为什么线性模型也会过拟合？（PPT 6）
+## 2.1 为什么线性模型也会过拟合？
 
 **Linearly Separable（线性可分）**：存在一条直线（二维）或超平面（高维），能把训练数据中的两类完全分开。
 
-即使已经正确分类所有训练样本，Cross-Entropy 仍可能继续下降：
+即使已经正确分类所有训练样本，但我们还需要下降Cross-Entropy
 
-- 对 Class 1 样本，模型希望预测概率无限接近 $1$。
-- 对 Class 0 样本，模型希望预测概率无限接近 $0$。
-- 模型可能通过放大权重，使概率变得越来越极端，而不需要改变分类边界。
+- 对 Class 1 样本，模型希望模型的p1无限接近 $1$。反之亦然
+
+进一步下降E的办法
+- 放大权重，使概率变得越来越极端（不需要改变分类边界！因为本来分类就分对了）
 
 因此，**训练集完全分对，不代表泛化一定好**。
 
 <a id="sec-2-2"></a>
 
-## 2.2 增大权重的效果（PPT 7–10）
+## 2.2 增大权重的效果
 
-课件依次展示：
 
-| PPT | 权重 $\mathbf{w}$ | 预测概率的变化 |
-|---|---|---|
-| 7 | $(0.5,0.5,0.5)^T$ | Sigmoid 比较平缓，概率过渡区较宽 |
-| 9 | $(10,10,10)^T$ | 曲线接近 Step Function（阶跃函数） |
+| 权重 $\mathbf{w}$ | 预测概率的变化 |
+|---|---|
+| $(0.5,0.5,0.5)^T$ | Sigmoid 比较平缓，概率过渡区较宽 |
+| $(10,10,10)^T$ | 曲线接近 Step Function（阶跃函数） |
 
 **概率却可以越来越极端**BUT！！！**决策边界不变**。
 - 如果权重整体乘负数，score 符号反转，预测类别也会交换。
 
-**结论：** w越大，虽然说最小化了 Cross-Entropy，但Sigmoid 越像阶跃函数，模型给出的概率就越极端。 可能使权重持续增大，需要 Regularisation 约束权重。
+**所以说！：** w越大，虽然说最小化了 Cross-Entropy，但Sigmoid 越像阶跃函数，模型给出的概率就越极端。 
+
+所以通过提高w降E的办法需要 Regularisation 约束w。
 
 ---
 
