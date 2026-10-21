@@ -207,14 +207,12 @@ $$
 L2 正则项的二阶导数为 $\lambda I$。因此：
 
 $$
-H_{\tilde{E}}(\mathbf{w})=\sum_{i=1}^{N}p_1^{(i)}(1-p_1^{(i)})\mathbf{x}^{(i)}(\mathbf{x}^{(i)})^T+\lambda I
+H_{\tilde{E}}(\mathbf{w})=H_E(\mathbf{w})+\lambda I
 $$
 
-- $I$：Identity Matrix（单位矩阵），主对角线为 $1$，其余为 $0$。
+- $I$：Identity Matrix（单位矩阵）
 - **Gradient Descent** 使用 Gradient；**Newton–Raphson / IRLS** 还需要 Hessian。
-- **记忆：新 Hessian = 原 Hessian + $\lambda I$。**
 
-> 原课件第 12 页梯度中有一处 $y^{(t)}$，结合该页的样本求和符号，这里统一写为 $y^{(i)}$。
 
 ---
 
