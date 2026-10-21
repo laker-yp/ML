@@ -43,10 +43,7 @@ $$
 函数 $f$ 的定义域 $C$ 必须是凸集合，并且对任意 $\mathbf{x}^{(1)},\mathbf{x}^{(2)}\in C$ 和 $\lambda\in(0,1)$：
 
 $$
-f\left(\lambda\mathbf{x}^{(1)}+(1-\lambda)\mathbf{x}^{(2)}\right)
-\leq
-\lambda f\left(\mathbf{x}^{(1)}\right)
-+(1-\lambda)f\left(\mathbf{x}^{(2)}\right)
+f\left(\lambda\mathbf{x}^{(1)}+(1-\lambda)\mathbf{x}^{(2)}\right) \leq \lambda f\left(\mathbf{x}^{(1)}\right) +(1-\lambda)f\left(\mathbf{x}^{(2)}\right)
 $$
 
 两边分别表示：
@@ -61,9 +58,7 @@ $$
 补充例子：$f(x)=x^2$，取 $x^{(1)}=-1$、$x^{(2)}=1$、$\lambda=\frac12$：
 
 $$
-f(0)=0
-<
-\frac12f(-1)+\frac12f(1)=1
+f(0)=0 < \frac12f(-1)+\frac12f(1)=1
 $$
 
 ### 严格凸函数 Strictly Convex Function
@@ -71,10 +66,7 @@ $$
 如果对任意两个**不同的点**，以及任意 $\lambda\in(0,1)$，都有：
 
 $$
-f\left(\lambda\mathbf{x}^{(1)}+(1-\lambda)\mathbf{x}^{(2)}\right)
-<
-\lambda f\left(\mathbf{x}^{(1)}\right)
-+(1-\lambda)f\left(\mathbf{x}^{(2)}\right)
+f\left(\lambda\mathbf{x}^{(1)}+(1-\lambda)\mathbf{x}^{(2)}\right) < \lambda f\left(\mathbf{x}^{(1)}\right) +(1-\lambda)f\left(\mathbf{x}^{(2)}\right)
 $$
 
 则函数是严格凸函数。
@@ -121,10 +113,7 @@ $$
 对应的不等式方向与凸函数相反：
 
 $$
-f\left(\lambda\mathbf{x}^{(1)}+(1-\lambda)\mathbf{x}^{(2)}\right)
-\geq
-\lambda f\left(\mathbf{x}^{(1)}\right)
-+(1-\lambda)f\left(\mathbf{x}^{(2)}\right)
+f\left(\lambda\mathbf{x}^{(1)}+(1-\lambda)\mathbf{x}^{(2)}\right) \geq \lambda f\left(\mathbf{x}^{(1)}\right) +(1-\lambda)f\left(\mathbf{x}^{(2)}\right)
 $$
 
 **几何意义：函数图像位于两点连成的线段上方，或与线段重合。**
@@ -144,12 +133,7 @@ $$
 对可微函数，凸性等价于：对定义域内任意 $\mathbf{x}^{(0)}$ 和 $\mathbf{x}$，
 
 $$
-f(\mathbf{x})
-\geq
-f\left(\mathbf{x}^{(0)}\right)
-+
-\nabla f\left(\mathbf{x}^{(0)}\right)^{T}
-\left(\mathbf{x}-\mathbf{x}^{(0)}\right)
+f(\mathbf{x}) \geq f\left(\mathbf{x}^{(0)}\right) + \nabla f\left(\mathbf{x}^{(0)}\right)^{T} \left(\mathbf{x}-\mathbf{x}^{(0)}\right)
 $$
 
 右边是在 $\mathbf{x}^{(0)}$ 处的切线或切平面的值。
@@ -181,13 +165,13 @@ $$
 | 情况 | 凸的充要条件 | 严格凸的充分条件 |
 | --- | --- | --- |
 | 一元函数 | 所有 $x$ 处都有 $f''(x)\geq0$ | 所有 $x$ 处都有 $f''(x)>0$ |
-| 多元函数 | 所有 $\mathbf{x}$ 处都有 $H_f(\mathbf{x})\succeq0$ | 所有 $\mathbf{x}$ 处都有 $H_f(\mathbf{x})\succ0$ |
+| 多元函数 | 所有 $\mathbf{x}$ 处都有 $H_f(\mathbf{x})\succeq 0$ | 所有 $\mathbf{x}$ 处都有 $H_f(\mathbf{x})\succ 0$ |
 
 其中：
 
 - $H_f$：海森矩阵（Hessian）。
-- $\succeq0$：正半定（Positive Semidefinite）。
-- $\succ0$：正定（Positive Definite）。
+- $\succeq 0$：正半定（Positive Semidefinite）。
+- $\succ 0$：正定（Positive Definite）。
 
 **“充分条件”表示满足它就一定成立，但不满足它时，不能直接断定不成立。**
 
@@ -224,13 +208,7 @@ $$
 将所有一阶偏导数组合起来，得到梯度：
 
 $$
-\nabla f(\mathbf{x})
-=
-\begin{bmatrix}
-\frac{\partial f}{\partial x_1}\\
-\vdots\\
-\frac{\partial f}{\partial x_d}
-\end{bmatrix}
+\nabla f(\mathbf{x}) = \begin{bmatrix} \frac{\partial f}{\partial x_1}\\ \vdots\\ \frac{\partial f}{\partial x_d} \end{bmatrix}
 $$
 
 ### 二阶导数：斜率怎样变化
@@ -251,17 +229,11 @@ $$
 二阶偏导数分为：
 
 $$
-\frac{\partial^2f}{\partial x_i^2}
-=
-\frac{\partial}{\partial x_i}
-\left(\frac{\partial f}{\partial x_i}\right)
+\frac{\partial^2f}{\partial x_i^2} = \frac{\partial}{\partial x_i} \left(\frac{\partial f}{\partial x_i}\right)
 $$
 
 $$
-\frac{\partial^2f}{\partial x_i\partial x_j}
-=
-\frac{\partial}{\partial x_i}
-\left(\frac{\partial f}{\partial x_j}\right)
+\frac{\partial^2f}{\partial x_i\partial x_j} = \frac{\partial}{\partial x_i} \left(\frac{\partial f}{\partial x_j}\right)
 $$
 
 第二个式子按照内外层理解：**先对 $x_j$ 求偏导，再将结果对 $x_i$ 求偏导。**
@@ -271,26 +243,13 @@ $$
 对 $\mathbf{x}=(x_1,\ldots,x_d)^T$，Hessian 是一个 $d\times d$ 矩阵，其第 $i$ 行、第 $j$ 列为：
 
 $$
-[H_f(\mathbf{x})]_{ij}
-=
-\frac{\partial}{\partial x_i}
-\left(\frac{\partial f}{\partial x_j}\right)
+[H_f(\mathbf{x})]_{ij} = \frac{\partial}{\partial x_i} \left(\frac{\partial f}{\partial x_j}\right)
 $$
 
 两个变量时：
 
 $$
-H_f(\mathbf{x})
-=
-\begin{bmatrix}
-\frac{\partial^2f}{\partial x_1^2}
-&
-\frac{\partial^2f}{\partial x_1\partial x_2}
-\\
-\frac{\partial^2f}{\partial x_2\partial x_1}
-&
-\frac{\partial^2f}{\partial x_2^2}
-\end{bmatrix}
+H_f(\mathbf{x}) = \begin{bmatrix} \frac{\partial^2f}{\partial x_1^2} & \frac{\partial^2f}{\partial x_1\partial x_2} \\ \frac{\partial^2f}{\partial x_2\partial x_1} & \frac{\partial^2f}{\partial x_2^2} \end{bmatrix}
 $$
 
 - **对角线元素：**沿某个变量方向移动时，该方向的斜率怎样变化。
@@ -305,19 +264,13 @@ f(x_1,x_2)=x_1^2+x_1x_2+2x_2^2
 $$
 
 $$
-\frac{\partial f}{\partial x_1}=2x_1+x_2,
-\qquad
-\frac{\partial f}{\partial x_2}=x_1+4x_2
+\frac{\partial f}{\partial x_1}=2x_1+x_2, \qquad \frac{\partial f}{\partial x_2}=x_1+4x_2
 $$
 
 因此：
 
 $$
-H_f=
-\begin{bmatrix}
-2&1\\
-1&4
-\end{bmatrix}
+H_f= \begin{bmatrix} 2&1\\ 1&4 \end{bmatrix}
 $$
 
 例如非对角线的 $1$，表示增加 $x_2$ 时，$x_1$ 方向的斜率 $2x_1+x_2$ 会以变化率 $1$ 增加。
@@ -333,9 +286,7 @@ $$
 一阶、二阶导数分别为：
 
 $$
-f'(x)=3x^2-3,
-\qquad
-f''(x)=6x
+f'(x)=3x^2-3, \qquad f''(x)=6x
 $$
 
 ### 用一阶导数判断增减
@@ -343,9 +294,7 @@ $$
 令 $f'(x)=0$：
 
 $$
-3x^2-3=0
-\quad\Longrightarrow\quad
-x=-1\ \text{或}\ x=1
+3x^2-3=0 \quad\Longrightarrow\quad x=-1\ \text{或}\ x=1
 $$
 
 | 区间 | $f'(x)$ 的符号 | 函数变化 |
@@ -416,8 +365,8 @@ $$
 
 | 类型 | 条件 |
 | --- | --- |
-| 正半定 Positive Semidefinite，$A\succeq0$ | 对任意非零向量 $\mathbf{z}$，都有 $\mathbf{z}^TA\mathbf{z}\geq0$ |
-| 正定 Positive Definite，$A\succ0$ | 对任意非零向量 $\mathbf{z}$，都有 $\mathbf{z}^TA\mathbf{z}>0$ |
+| 正半定 Positive Semidefinite，$A\succeq 0$ | 对任意非零向量 $\mathbf{z}$，都有 $\mathbf{z}^TA\mathbf{z}\geq0$ |
+| 正定 Positive Definite，$A\succ 0$ | 对任意非零向量 $\mathbf{z}$，都有 $\mathbf{z}^TA\mathbf{z}>0$ |
 
 正定一定正半定；正半定允许某些非零方向的结果等于零。
 
@@ -426,21 +375,11 @@ $$
 课件中的例子：
 
 $$
-A=
-\begin{bmatrix}
-1&0\\
-0&1
-\end{bmatrix}
+A= \begin{bmatrix} 1&0\\ 0&1 \end{bmatrix}
 $$
 
 $$
-\mathbf{z}^TA\mathbf{z}
-=
-\begin{bmatrix}z_1&z_2\end{bmatrix}
-\begin{bmatrix}1&0\\0&1\end{bmatrix}
-\begin{bmatrix}z_1\\z_2\end{bmatrix}
-=
-z_1^2+z_2^2
+\mathbf{z}^TA\mathbf{z} = \begin{bmatrix}z_1&z_2\end{bmatrix} \begin{bmatrix}1&0\\0&1\end{bmatrix} \begin{bmatrix}z_1\\z_2\end{bmatrix} = z_1^2+z_2^2
 $$
 
 非零向量的两个分量不可能同时为零，所以结果严格大于零，$A$ 是正定矩阵。
@@ -448,13 +387,7 @@ $$
 补充对比：
 
 $$
-B=
-\begin{bmatrix}
-1&0\\
-0&0
-\end{bmatrix},
-\qquad
-\mathbf{z}^TB\mathbf{z}=z_1^2\geq0
+B= \begin{bmatrix} 1&0\\ 0&0 \end{bmatrix}, \qquad \mathbf{z}^TB\mathbf{z}=z_1^2\geq0
 $$
 
 $B$ 是正半定矩阵，但不是正定矩阵：取 $\mathbf{z}=(0,1)^T$，结果就是零。
@@ -497,16 +430,13 @@ $$
 对二阶可微函数，在凸定义域上：
 
 $$
-f\text{ 是凸函数}
-\quad\Longleftrightarrow\quad
-H_f(\mathbf{x})\succeq0
-\quad\text{对所有 }\mathbf{x}
+f\text{ 是凸函数} \quad\Longleftrightarrow\quad H_f(\mathbf{x})\succeq 0 \quad\text{对所有 }\mathbf{x}
 $$
 
 如果对所有 $\mathbf{x}$ 都有：
 
 $$
-H_f(\mathbf{x})\succ0
+H_f(\mathbf{x})\succ 0
 $$
 
 则 $f$ 严格凸。这仍然是充分条件，而不是必要条件。
@@ -520,31 +450,19 @@ $$
 先求梯度：
 
 $$
-\nabla f=
-\begin{bmatrix}
-x_1^3\\
-x_2^3
-\end{bmatrix}
+\nabla f= \begin{bmatrix} x_1^3\\ x_2^3 \end{bmatrix}
 $$
 
 再求 Hessian：
 
 $$
-H_f(\mathbf{x})
-=
-\begin{bmatrix}
-3x_1^2&0\\
-0&3x_2^2
-\end{bmatrix}
+H_f(\mathbf{x}) = \begin{bmatrix} 3x_1^2&0\\ 0&3x_2^2 \end{bmatrix}
 $$
 
 对任意方向 $\mathbf{z}=(z_1,z_2)^T$：
 
 $$
-\mathbf{z}^TH_f(\mathbf{x})\mathbf{z}
-=
-3z_1^2x_1^2+3z_2^2x_2^2
-\geq0
+\mathbf{z}^TH_f(\mathbf{x})\mathbf{z} = 3z_1^2x_1^2+3z_2^2x_2^2 \geq0
 $$
 
 因为每一项都是非负数，所以 Hessian 在所有位置都正半定，函数是凸函数。
@@ -564,9 +482,7 @@ $$
 对于二阶连续可微函数的内部点 $\mathbf{x}^*$，如果：
 
 $$
-\nabla f(\mathbf{x}^*)=\mathbf{0}
-\qquad\text{且}\qquad
-H_f(\mathbf{x}^*)\succ0
+\nabla f(\mathbf{x}^*)=\mathbf{0} \qquad\text{且}\qquad H_f(\mathbf{x}^*)\succ 0
 $$
 
 那么 $\mathbf{x}^*$ 是严格局部最小点。
@@ -588,29 +504,19 @@ $$
 课件给出：
 
 $$
-A=
-\begin{bmatrix}
-1&2\\
-2&1
-\end{bmatrix}
+A= \begin{bmatrix} 1&2\\ 2&1 \end{bmatrix}
 $$
 
 虽然所有元素都大于零，但：
 
 $$
-\mathbf{z}^TA\mathbf{z}
-=
-z_1^2+4z_1z_2+z_2^2
+\mathbf{z}^TA\mathbf{z} = z_1^2+4z_1z_2+z_2^2
 $$
 
 取：
 
 $$
-\mathbf{z}=
-\begin{bmatrix}
-1\\
--1
-\end{bmatrix}
+\mathbf{z}= \begin{bmatrix} 1\\ -1 \end{bmatrix}
 $$
 
 则：
@@ -628,23 +534,13 @@ $$
 课件给出：
 
 $$
-A=
-\begin{bmatrix}
-2&-1&0\\
--1&2&-1\\
-0&-1&2
-\end{bmatrix}
+A= \begin{bmatrix} 2&-1&0\\ -1&2&-1\\ 0&-1&2 \end{bmatrix}
 $$
 
 虽然有负元素，但：
 
 $$
-\begin{aligned}
-\mathbf{z}^TA\mathbf{z}
-&=2z_1^2+2z_2^2+2z_3^2-2z_1z_2-2z_2z_3\\
-&=z_1^2+(z_1-z_2)^2+(z_2-z_3)^2+z_3^2\\
-&\geq0
-\end{aligned}
+\begin{aligned} \mathbf{z}^TA\mathbf{z} &=2z_1^2+2z_2^2+2z_3^2-2z_1z_2-2z_2z_3\\ &=z_1^2+(z_1-z_2)^2+(z_2-z_3)^2+z_3^2\\ &\geq0 \end{aligned}
 $$
 
 因此它是正半定矩阵。
@@ -659,9 +555,9 @@ $$
 
 | 需要判断的性质 | 一元函数 | 多元函数 |
 | --- | --- | --- |
-| 凸：充要条件 | 所有 $x$ 处，$f''(x)\geq0$ | 所有 $\mathbf{x}$ 处，$H_f(\mathbf{x})\succeq0$ |
-| 严格凸：充分条件 | 所有 $x$ 处，$f''(x)>0$ | 所有 $\mathbf{x}$ 处，$H_f(\mathbf{x})\succ0$ |
-| 严格局部最小点：充分条件 | $f'(x^*)=0$ 且 $f''(x^*)>0$ | $\nabla f(\mathbf{x}^*)=\mathbf{0}$ 且 $H_f(\mathbf{x}^*)\succ0$ |
+| 凸：充要条件 | 所有 $x$ 处，$f''(x)\geq0$ | 所有 $\mathbf{x}$ 处，$H_f(\mathbf{x})\succeq 0$ |
+| 严格凸：充分条件 | 所有 $x$ 处，$f''(x)>0$ | 所有 $\mathbf{x}$ 处，$H_f(\mathbf{x})\succ 0$ |
+| 严格局部最小点：充分条件 | $f'(x^*)=0$ 且 $f''(x^*)>0$ | $\nabla f(\mathbf{x}^*)=\mathbf{0}$ 且 $H_f(\mathbf{x}^*)\succ 0$ |
 | 凸函数的全局最小点 | 内部驻点满足 $f'(x^*)=0$ 即可 | 内部驻点满足 $\nabla f(\mathbf{x}^*)=\mathbf{0}$ 即可 |
 
 必须分清：
@@ -674,3 +570,4 @@ $$
 6. **一处正半定不等于整个函数凸。**凸性需要整个定义域上的条件。
 7. **梯度为零不一定是最小点。**对一般函数，还要考虑曲率；对凸函数，内部驻点才可直接判为全局最小点。
 8. **最小点不一定是驻点。**边界最小点可能导数不为零，例如 $f(x)=x$ 在 $[0,1]$ 上的最小点是 $x=0$。
+
