@@ -16,7 +16,7 @@
 
 <a id="svm-primal"></a>
 
-## 1. 从 SVM 看原始优化问题
+# 1. 从 SVM 看原始优化问题
 
 ### Maximum Margin Classifier
 
@@ -58,7 +58,7 @@ w·x 表示权重向量与输入向量的内积，等价于课件中的转置相
 
 <a id="lagrange-relaxation"></a>
 
-## 2. Lagrange Relaxation：把约束放进目标函数
+# 2. Lagrange Relaxation：把约束放进目标函数
 
 ### 统一写成小于等于零
 
@@ -134,7 +134,7 @@ w·x 表示权重向量与输入向量的内积，等价于课件中的转置相
 
 <a id="minimax-primal"></a>
 
-## 3. Minimax Primal：用 Lagrangian 表达原问题
+# 3. Minimax Primal：用 Lagrangian 表达原问题
 
 ### 核心想法：对乘子再做一次最大化
 
@@ -179,7 +179,7 @@ w·x 表示权重向量与输入向量的内积，等价于课件中的转置相
 
 <a id="dual-formulation"></a>
 
-## 4. Dual Formulation：交换优化顺序
+# 4. Dual Formulation：交换优化顺序
 
 ### 从 Minimax 到 Maxmin
 
@@ -230,7 +230,7 @@ Primal 的 Lagrangian 表达，是先对乘子最大化，再对原变量最小�
 
 <a id="strong-duality"></a>
 
-## 5. Strong Duality：什么时候两者相等
+# 5. Strong Duality：什么时候两者相等
 
 ### Strong Duality 的含义
 
@@ -273,7 +273,7 @@ Slater 条件是保证强对偶的**充分条件之一**；没有找到严格可
 
 <a id="kkt-conditions"></a>
 
-## 6. KKT Conditions：四组最优性条件
+# 6. KKT Conditions：四组最优性条件
 
 ### 从无约束最优性到有约束最优性
 
@@ -332,7 +332,7 @@ Slater 条件是保证强对偶的**充分条件之一**；没有找到严格可
 
 <a id="eliminate-primal-variables"></a>
 
-## 7. 用 Stationarity 消去原变量
+# 7. 用 Stationarity 消去原变量
 
 Dual 的顺序是：先固定乘子，对原变量最小化 L，得到 G(a)；再对乘子最大化 G(a)。
 
@@ -371,7 +371,7 @@ Dual 的顺序是：先固定乘子，对原变量最小化 L，得到 G(a)；�
 
 <a id="worked-example"></a>
 
-## 8. 完整例题：两个变量、一个约束
+# 8. 完整例题：两个变量、一个约束
 
 ### 题目与符号
 
@@ -449,7 +449,7 @@ G(a1) = 25a1² - 50a1² - 4。
 
 <a id="revision"></a>
 
-## 9. 核心公式与易错点
+# 9. 核心公式与易错点
 
 ### 本讲的完整路线
 
