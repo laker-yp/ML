@@ -160,15 +160,8 @@ $$
 
 - **第一项 $E(\mathbf{w})$**：让预测尽量符合训练集。
 - **第二项**：让过大的权重受到惩罚。
-- $\lambda$ 是 **Hyperparameter（超参数）**，控制惩罚强度。
+- $\lambda$  **Hyperparameter（超参数）**，控制惩罚强度。
 
-| $\lambda$ | 含义 |
-|---|---|
-| $0$ | 不使用正则化 |
-| 较小 | 惩罚较弱，更重视拟合训练集 |
-| 较大 | 惩罚较强，可能抑制过拟合；过大则可能欠拟合 |
-
-**易错点：** $\|\mathbf{w}\|_2$ 才是 L2 Norm，目标函数实际上使用其**平方**。课件把 $w_0$ 也纳入求和，本节推导沿用这一约定。
 
 <a id="sec-3-2"></a>
 
@@ -194,17 +187,16 @@ $$
 
 **记忆：新 Gradient = 原 Gradient + $\lambda\mathbf{w}$。**
 
-使用 Gradient Descent 时：
+使用 Gradient Descent 更新w时：
 
 $$
 \mathbf{w}_{new}=\mathbf{w}_{old}-\eta\nabla\tilde{E}(\mathbf{w}_{old})
 $$
 
-这里 $\eta$ 是 Learning Rate。该更新式是根据课件梯度公式直接写出的。
 
 <a id="sec-3-3"></a>
 
-## 3.3 加入 L2 后的 Hessian（PPT 12）
+## 3.3 加入 L2 后的 Hessian
 
 原始 Hessian：
 
