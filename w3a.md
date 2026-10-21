@@ -272,7 +272,7 @@ $$
 w_0+w_1\phi_1(\mathbf{x})+w_2\phi_2(\mathbf{x})=0
 $$
 
-把 $\phi_1(\mathbf{x})=x_1$、$\phi_2(\mathbf{x})=x_1^2$ 代入：
+把 $\phi_1(\mathbf{x})=x_1$、φ₂(x) = x₁² 代入：
 
 $$
 w_0+w_1x_1+w_2x_1^2=0
