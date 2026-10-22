@@ -419,7 +419,7 @@ $$
 
 <a id="sec-7-1"></a>
 
-## 7.1 完整训练流程（PPT 28）
+## 7.1 完整训练流程
 
 1. **Choose a Feature Transform**：选择 $\phi(\mathbf{x})$，例如 $(1,x_1,x_1^2)^T$。
 2. **Transform the Training Set**：每个输入 $\mathbf{x}^{(i)}$ 替换为 $\phi(\mathbf{x}^{(i)})$，标签 $y^{(i)}$ 不变。
@@ -434,7 +434,7 @@ $$
 
 <a id="sec-7-2"></a>
 
-## 7.2 Hypothesis / Score（PPT 29）
+## 7.2 Hypothesis / Score
 
 **原来：**
 
@@ -454,13 +454,13 @@ $$
 \ln\frac{p_1}{1-p_1}=\mathbf{w}^T\phi(\mathbf{x})
 $$
 
-**Sigmoid 没有换；变化的只是输入由 $\mathbf{x}$ 变成 $\phi(\mathbf{x})$。**
+**总结：变化的只是input由 $\mathbf{x}$ 变成 $\phi(\mathbf{x})$。**
 
 <a id="sec-7-3"></a>
 
-## 7.3 Cross-Entropy（PPT 30）
+## 7.3 Cross-Entropy
 
-为简化记号，设：
+为简化，设：
 
 $$
 p_{\phi}^{(i)}=\frac{1}{1+e^{-\mathbf{w}^T\phi(\mathbf{x}^{(i)})}}
@@ -476,7 +476,7 @@ $$
 
 <a id="sec-7-4"></a>
 
-## 7.4 Gradient 与 Hessian（PPT 31）
+## 7.4 Gradient 与 Hessian
 
 **Gradient：**
 
@@ -494,7 +494,7 @@ $$
 
 <a id="sec-7-5"></a>
 
-## 7.5 同时使用 L2（将 PPT 11–12 与 30–31 结合）
+## 7.5 同时使用 L2
 
 $$
 \tilde{E}_{\phi}(\mathbf{w})=E_{\phi}(\mathbf{w})+\frac{\lambda}{2}\|\mathbf{w}\|_2^2
@@ -543,7 +543,7 @@ Linear Models 的优点（PPT 33）：学习算法常较高效，并可能具有
 
 <a id="sec-9"></a>
 
-# 9. Nonlinear Transformations 的风险（PPT 34–35）
+# 9. Nonlinear Transformations 的风险
 
 **PPT 34：Linear Fit 与 4th Order Polynomial 对比。**
 
@@ -551,7 +551,7 @@ Linear Models 的优点（PPT 33）：学习算法常较高效，并可能具有
 - **训练集拟合得更好，不等于在新数据上泛化得更好。**
 - 高阶变换也可能导致 Feature Space 的维度很高。
 
-**PPT 35 总结：**
+**总结：**
 
 1. Regularisation 有助于减少 Overfitting。
 2. Nonlinear Transformations 可使原空间中非线性可分的问题，在新的 Feature Space 中变得线性可分。
@@ -563,21 +563,21 @@ Linear Models 的优点（PPT 33）：学习算法常较高效，并可能具有
 
 <a id="sec-10"></a>
 
-# 10. 考前重点公式
+# 10. 重点公式
 
-| 知识点 | 公式 | PPT |
-|---|---|---|
-| Score | $z=\mathbf{w}^T\mathbf{x}$ | 4 |
-| Sigmoid | $p_1=1/(1+e^{-z})$ | 4 |
-| 决策边界 | $\mathbf{w}^T\mathbf{x}=0$ | 4、15 |
-| Generalisation Gap | $G=E(\mathbf{w})-\hat{E}(\mathbf{w})$ | 5 |
-| L2 Loss | $\tilde{E}=E+(\lambda/2)\|\mathbf{w}\|_2^2$ | 11 |
-| L2 Gradient | $\nabla\tilde{E}=\nabla E+\lambda\mathbf{w}$ | 12 |
-| L2 Hessian | $H_{\tilde{E}}=H_E+\lambda I$ | 12 |
-| Feature Transform | $\mathbf{x}\rightarrow\phi(\mathbf{x})$ | 19–21 |
-| 变换后 Score | $z=\mathbf{w}^T\phi(\mathbf{x})$ | 29 |
+| 知识点 | 公式 |
+|---|---|
+| Score | $z=\mathbf{w}^T\mathbf{x}$ |
+| Sigmoid | $p_1=1/(1+e^{-z})$ |
+| 决策边界 | $\mathbf{w}^T\mathbf{x}=0$ | 
+| Generalisation Gap | $G=E(\mathbf{w})-\hat{E}(\mathbf{w})$ |
+| L2 Loss | $\tilde{E}=E+(\lambda/2)\|\mathbf{w}\|_2^2$ | 
+| L2 Gradient | $\nabla\tilde{E}=\nabla E+\lambda\mathbf{w}$ | 
+| L2 Hessian | $H_{\tilde{E}}=H_E+\lambda I$ | 
+| Feature Transform | $\mathbf{x}\rightarrow\phi(\mathbf{x})$ | 
+| 变换后 Score | $z=\mathbf{w}^T\phi(\mathbf{x})$ |
 
-**记住三句话：**
+**记：**
 
 - **Overfitting**：即使决策边界是线性的，权重也可能过大；用 **Regularisation** 缓解。
 - **Underfitting**：原来的线性边界不够灵活；用 **Nonlinear Transformations** 增强表达能力。
